@@ -44,11 +44,6 @@ Partial Class Form1
         Me.tbxOutputDirectory = New System.Windows.Forms.TextBox()
         Me.btnOutputDirectory = New System.Windows.Forms.Button()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
-        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
-        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.DataGridView2 = New System.Windows.Forms.DataGridView()
         Me.Column6 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column7 = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -68,6 +63,11 @@ Partial Class Form1
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
+        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -87,7 +87,7 @@ Partial Class Form1
         '
         'btnInputDirectory
         '
-        Me.btnInputDirectory.Location = New System.Drawing.Point(13, 30)
+        Me.btnInputDirectory.Location = New System.Drawing.Point(14, 59)
         Me.btnInputDirectory.Name = "btnInputDirectory"
         Me.btnInputDirectory.Size = New System.Drawing.Size(104, 23)
         Me.btnInputDirectory.TabIndex = 5
@@ -96,7 +96,7 @@ Partial Class Form1
         '
         'txtInputDirectory
         '
-        Me.txtInputDirectory.Location = New System.Drawing.Point(139, 32)
+        Me.txtInputDirectory.Location = New System.Drawing.Point(124, 62)
         Me.txtInputDirectory.Name = "txtInputDirectory"
         Me.txtInputDirectory.ReadOnly = True
         Me.txtInputDirectory.Size = New System.Drawing.Size(257, 20)
@@ -130,6 +130,7 @@ Partial Class Form1
         'rbCreate
         '
         Me.rbCreate.AutoSize = True
+        Me.rbCreate.Enabled = False
         Me.rbCreate.Location = New System.Drawing.Point(557, 30)
         Me.rbCreate.Name = "rbCreate"
         Me.rbCreate.Size = New System.Drawing.Size(102, 17)
@@ -140,6 +141,7 @@ Partial Class Form1
         'rbReview
         '
         Me.rbReview.AutoSize = True
+        Me.rbReview.Enabled = False
         Me.rbReview.Location = New System.Drawing.Point(666, 30)
         Me.rbReview.Name = "rbReview"
         Me.rbReview.Size = New System.Drawing.Size(102, 17)
@@ -167,7 +169,7 @@ Partial Class Form1
         '
         'btnSaveRemux
         '
-        Me.btnSaveRemux.Location = New System.Drawing.Point(221, 518)
+        Me.btnSaveRemux.Location = New System.Drawing.Point(363, 518)
         Me.btnSaveRemux.Name = "btnSaveRemux"
         Me.btnSaveRemux.Size = New System.Drawing.Size(125, 23)
         Me.btnSaveRemux.TabIndex = 20
@@ -223,7 +225,7 @@ Partial Class Form1
         '
         'tbxOutputDirectory
         '
-        Me.tbxOutputDirectory.Location = New System.Drawing.Point(139, 61)
+        Me.tbxOutputDirectory.Location = New System.Drawing.Point(511, 61)
         Me.tbxOutputDirectory.Name = "tbxOutputDirectory"
         Me.tbxOutputDirectory.ReadOnly = True
         Me.tbxOutputDirectory.Size = New System.Drawing.Size(257, 20)
@@ -231,7 +233,7 @@ Partial Class Form1
         '
         'btnOutputDirectory
         '
-        Me.btnOutputDirectory.Location = New System.Drawing.Point(13, 59)
+        Me.btnOutputDirectory.Location = New System.Drawing.Point(403, 59)
         Me.btnOutputDirectory.Name = "btnOutputDirectory"
         Me.btnOutputDirectory.Size = New System.Drawing.Size(104, 23)
         Me.btnOutputDirectory.TabIndex = 25
@@ -246,39 +248,11 @@ Partial Class Form1
         Me.DataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.DataGridView1.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3, Me.Column4, Me.Column5})
+        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3, Me.Column4})
         Me.DataGridView1.Location = New System.Drawing.Point(14, 239)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.Size = New System.Drawing.Size(772, 54)
         Me.DataGridView1.TabIndex = 28
-        '
-        'Column1
-        '
-        Me.Column1.HeaderText = "Video Format"
-        Me.Column1.Name = "Column1"
-        Me.Column1.ReadOnly = True
-        '
-        'Column2
-        '
-        Me.Column2.HeaderText = "Resolution"
-        Me.Column2.Items.AddRange(New Object() {"480p", "720p", "1080p", "2160p"})
-        Me.Column2.Name = "Column2"
-        '
-        'Column3
-        '
-        Me.Column3.HeaderText = "fps"
-        Me.Column3.Name = "Column3"
-        '
-        'Column4
-        '
-        Me.Column4.HeaderText = "Default"
-        Me.Column4.Name = "Column4"
-        '
-        'Column5
-        '
-        Me.Column5.HeaderText = "Output Format"
-        Me.Column5.Items.AddRange(New Object() {"h.264", "hevc"})
-        Me.Column5.Name = "Column5"
         '
         'DataGridView2
         '
@@ -342,7 +316,7 @@ Partial Class Form1
         Me.DataGridView3.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column13, Me.Column14, Me.Column15, Me.Column16, Me.Column17, Me.Column18, Me.Column19})
         Me.DataGridView3.Location = New System.Drawing.Point(13, 414)
         Me.DataGridView3.Name = "DataGridView3"
-        Me.DataGridView3.Size = New System.Drawing.Size(773, 97)
+        Me.DataGridView3.Size = New System.Drawing.Size(773, 98)
         Me.DataGridView3.TabIndex = 30
         '
         'Column13
@@ -401,11 +375,44 @@ Partial Class Form1
         Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
         Me.ClassMyTreeView1.TabIndex = 27
         '
+        'Column1
+        '
+        Me.Column1.HeaderText = "Video Format"
+        Me.Column1.Name = "Column1"
+        Me.Column1.ReadOnly = True
+        '
+        'Column2
+        '
+        Me.Column2.HeaderText = "Resolution"
+        Me.Column2.Name = "Column2"
+        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        '
+        'Column3
+        '
+        Me.Column3.HeaderText = "fps"
+        Me.Column3.Name = "Column3"
+        '
+        'Column4
+        '
+        Me.Column4.HeaderText = "Default"
+        Me.Column4.Name = "Column4"
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(220, 518)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(137, 23)
+        Me.Button1.TabIndex = 32
+        Me.Button1.Text = "Open Folder in Expolrer"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 566)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.DataGridView3)
         Me.Controls.Add(Me.DataGridView2)
@@ -466,11 +473,6 @@ Partial Class Form1
     Friend WithEvents DataGridView3 As DataGridView
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
-    Friend WithEvents Column1 As DataGridViewTextBoxColumn
-    Friend WithEvents Column2 As DataGridViewComboBoxColumn
-    Friend WithEvents Column3 As DataGridViewTextBoxColumn
-    Friend WithEvents Column4 As DataGridViewCheckBoxColumn
-    Friend WithEvents Column5 As DataGridViewComboBoxColumn
     Friend WithEvents Column6 As DataGridViewTextBoxColumn
     Friend WithEvents Column7 As DataGridViewTextBoxColumn
     Friend WithEvents Column8 As DataGridViewTextBoxColumn
@@ -485,4 +487,9 @@ Partial Class Form1
     Friend WithEvents Column17 As DataGridViewCheckBoxColumn
     Friend WithEvents Column18 As DataGridViewCheckBoxColumn
     Friend WithEvents Column19 As DataGridViewTextBoxColumn
+    Friend WithEvents Column1 As DataGridViewTextBoxColumn
+    Friend WithEvents Column2 As DataGridViewTextBoxColumn
+    Friend WithEvents Column3 As DataGridViewTextBoxColumn
+    Friend WithEvents Column4 As DataGridViewCheckBoxColumn
+    Friend WithEvents Button1 As Button
 End Class

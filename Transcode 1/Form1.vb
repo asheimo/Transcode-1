@@ -126,7 +126,7 @@ Public Class Form1
 
     Function SearchTreeNodeParents(strNodeName As String)
         Dim blnNodeFound As Boolean
-        Dim i
+        Dim i = 0
         If ClassMyTreeView1.Nodes.Count <> 0 Then
             For i = 1 To ClassMyTreeView1.Nodes.Count
                 If ClassMyTreeView1.Nodes(i - 1).Name = UCase(Strings.Left(strNodeName, 1)) & Mid(strNodeName, 2) Then
@@ -192,7 +192,7 @@ Public Class Form1
         Dim strPathRemuxFile As String
         Dim arrRemuxSettings
         Dim arrTracks
-        Dim fileReader As String
+        'Dim fileReader As String
 
         strPathRemux = txtInputDirectory.Text & "\Remux"
         strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
@@ -252,7 +252,6 @@ Public Class Form1
                 GetStreamCount = oStreamReader.ReadToEnd()
             Loop
         End Using
-
     End Function
 
     Function FormatInfo(ByRef Arr(), ByRef strType, strTrack)
@@ -284,8 +283,8 @@ Public Class Form1
                             strWidth = arrStream(i, 1)
                         Case "height"
                             strHeight = arrStream(i, 1)
-                        Case "codec_time_base"
-                            strFPS = Split(arrStream(i, 1), "/")(1) & "/" & Split(arrStream(i, 1), "/")(0)
+                        Case "r_frame_rate"
+                            strFPS = arrStream(i, 1) 'Split(arrStream(i, 1), "/")(1) & "/" & Split(arrStream(i, 1), "/")(0)
                         Case "disposition:default"
                             If arrStream(i, 1) = 0 Then
                                 blnDefault = False
@@ -466,6 +465,7 @@ Public Class Form1
     End Sub
 
     Private Sub btnMPV_Click(sender As Object, e As EventArgs) Handles btnMPV.Click
+        Dim strText As String
         If ClassMyTreeView1.GetNodeCount(False) = 0 Then
             MsgBox("No Title Selected", vbExclamation, "Error")
             Exit Sub
@@ -473,8 +473,12 @@ Public Class Form1
             MsgBox("No Title Selected", vbExclamation, "Error")
             Exit Sub
         Else
+            If ClassMyTreeView1.SelectedNode.Parent.Name <> "" Then
+                strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & ClassMyTreeView1.SelectedNode.Parent.Name & ".mkv"
+            Else
+                strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
+            End If
             Dim oProcess As New Process()
-            Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             Dim oStartInfo As New ProcessStartInfo("mpv", " -- " & Chr(34) & strText & Chr(34))
             oStartInfo.UseShellExecute = True
             oProcess.StartInfo = oStartInfo
@@ -483,12 +487,18 @@ Public Class Form1
     End Sub
 
     Private Sub btnSubtitleEdit_Click(sender As Object, e As EventArgs) Handles btnSubtitleEdit.Click
+        Dim strText
         If ClassMyTreeView1.GetNodeCount(False) = 0 Then
             MsgBox("No Title Selected", vbExclamation, "Error")
             Exit Sub
         Else
+            If ClassMyTreeView1.SelectedNode.Parent.Name <> "" Then
+                strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & ClassMyTreeView1.SelectedNode.Parent.Name & ".mkv"
+            Else
+                strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
+            End If
             Dim oProcess As New Process()
-            Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
+            'Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             Dim oStartInfo As New ProcessStartInfo("C:\bin\Subtitle Edit\SubtitleEdit", Chr(34) & strText & Chr(34))
             oStartInfo.UseShellExecute = True
             oProcess.StartInfo = oStartInfo
@@ -621,9 +631,9 @@ Public Class Form1
             strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
         Next
 
-        CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv" & Chr(34) & " --title '' " & strDefaultVideo & " " _
+        CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv" & Chr(34) & " --title '' " & strDefaultVideo & " " _
             & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strAlwaysOptions & " " _
-            & Chr(34) & strPathRemuxMovie & ClassMyTreeView1.SelectedNode.Text & ".mkv" & Chr(34)
+            & Chr(34) & strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv" & Chr(34)
 
     End Function
 
@@ -632,7 +642,7 @@ Public Class Form1
     End Sub
 
     Private Sub AboutToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem1.Click
-        MsgBox("Version" & vbCrLf & "0.0.1", vbOKOnly, "Version")
+        MsgBox("Version: " & My.Application.Info.Version.ToString, vbOKOnly, "Version")
     End Sub
 
     Sub SaveRemuxFile(strMKVMerge)
@@ -813,5 +823,9 @@ Public Class Form1
                                          DragDropEffects.Move)
             End If
         End If
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Process.Start(Chr(34) & txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & Chr(34))
     End Sub
 End Class
