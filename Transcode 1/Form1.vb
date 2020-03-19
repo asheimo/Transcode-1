@@ -642,7 +642,9 @@ Public Class Form1
     End Sub
 
     Private Sub AboutToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem1.Click
-        MsgBox("Version: " & My.Application.Info.Version.ToString, vbOKOnly, "Version")
+        Dim box = New AboutBox1()
+        box.ShowDialog()
+        'MsgBox("Version: " & My.Application.Info.Version.ToString, vbOKOnly, "Version")
     End Sub
 
     Sub SaveRemuxFile(strMKVMerge)
