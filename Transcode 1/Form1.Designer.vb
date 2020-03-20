@@ -30,7 +30,6 @@ Partial Class Form1
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog()
         Me.rbRemux = New System.Windows.Forms.RadioButton()
         Me.rbCreate = New System.Windows.Forms.RadioButton()
-        Me.rbReview = New System.Windows.Forms.RadioButton()
         Me.btnMPV = New System.Windows.Forms.Button()
         Me.btnSubtitleEdit = New System.Windows.Forms.Button()
         Me.btnSaveRemux = New System.Windows.Forms.Button()
@@ -38,12 +37,17 @@ Partial Class Form1
         Me.EditTitleToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.RunRemuxToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.tbxOutputDirectory = New System.Windows.Forms.TextBox()
         Me.btnOutputDirectory = New System.Windows.Forms.Button()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
+        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.DataGridView2 = New System.Windows.Forms.DataGridView()
         Me.Column6 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column7 = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -62,12 +66,9 @@ Partial Class Form1
         Me.Column19 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
-        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.Button1 = New System.Windows.Forms.Button()
+        Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -119,7 +120,7 @@ Partial Class Form1
         '
         Me.rbRemux.AutoSize = True
         Me.rbRemux.Checked = True
-        Me.rbRemux.Location = New System.Drawing.Point(492, 30)
+        Me.rbRemux.Location = New System.Drawing.Point(80, 31)
         Me.rbRemux.Name = "rbRemux"
         Me.rbRemux.Size = New System.Drawing.Size(58, 17)
         Me.rbRemux.TabIndex = 8
@@ -131,23 +132,12 @@ Partial Class Form1
         '
         Me.rbCreate.AutoSize = True
         Me.rbCreate.Enabled = False
-        Me.rbCreate.Location = New System.Drawing.Point(557, 30)
+        Me.rbCreate.Location = New System.Drawing.Point(145, 31)
         Me.rbCreate.Name = "rbCreate"
-        Me.rbCreate.Size = New System.Drawing.Size(102, 17)
+        Me.rbCreate.Size = New System.Drawing.Size(76, 17)
         Me.rbCreate.TabIndex = 9
-        Me.rbCreate.Text = "Choose Settings"
+        Me.rbCreate.Text = "Transcode"
         Me.rbCreate.UseVisualStyleBackColor = True
-        '
-        'rbReview
-        '
-        Me.rbReview.AutoSize = True
-        Me.rbReview.Enabled = False
-        Me.rbReview.Location = New System.Drawing.Point(666, 30)
-        Me.rbReview.Name = "rbReview"
-        Me.rbReview.Size = New System.Drawing.Size(102, 17)
-        Me.rbReview.TabIndex = 10
-        Me.rbReview.Text = "Review Settings"
-        Me.rbReview.UseVisualStyleBackColor = True
         '
         'btnMPV
         '
@@ -199,15 +189,21 @@ Partial Class Form1
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RunRemuxToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
         '
+        'RunRemuxToolStripMenuItem
+        '
+        Me.RunRemuxToolStripMenuItem.Name = "RunRemuxToolStripMenuItem"
+        Me.RunRemuxToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.RunRemuxToolStripMenuItem.Text = "Run Remux"
+        '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(93, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'AboutToolStripMenuItem
@@ -253,6 +249,29 @@ Partial Class Form1
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.Size = New System.Drawing.Size(772, 54)
         Me.DataGridView1.TabIndex = 28
+        '
+        'Column1
+        '
+        Me.Column1.HeaderText = "Video Format"
+        Me.Column1.Name = "Column1"
+        Me.Column1.ReadOnly = True
+        '
+        'Column2
+        '
+        Me.Column2.HeaderText = "Resolution"
+        Me.Column2.Name = "Column2"
+        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        '
+        'Column3
+        '
+        Me.Column3.HeaderText = "fps"
+        Me.Column3.Name = "Column3"
+        '
+        'Column4
+        '
+        Me.Column4.HeaderText = "Default"
+        Me.Column4.Name = "Column4"
         '
         'DataGridView2
         '
@@ -368,36 +387,6 @@ Partial Class Form1
         Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
         Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(0, 17)
         '
-        'ClassMyTreeView1
-        '
-        Me.ClassMyTreeView1.Location = New System.Drawing.Point(403, 88)
-        Me.ClassMyTreeView1.Name = "ClassMyTreeView1"
-        Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
-        Me.ClassMyTreeView1.TabIndex = 27
-        '
-        'Column1
-        '
-        Me.Column1.HeaderText = "Video Format"
-        Me.Column1.Name = "Column1"
-        Me.Column1.ReadOnly = True
-        '
-        'Column2
-        '
-        Me.Column2.HeaderText = "Resolution"
-        Me.Column2.Name = "Column2"
-        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
-        '
-        'Column3
-        '
-        Me.Column3.HeaderText = "fps"
-        Me.Column3.Name = "Column3"
-        '
-        'Column4
-        '
-        Me.Column4.HeaderText = "Default"
-        Me.Column4.Name = "Column4"
-        '
         'Button1
         '
         Me.Button1.Location = New System.Drawing.Point(220, 518)
@@ -407,11 +396,28 @@ Partial Class Form1
         Me.Button1.Text = "Open Folder in Expolrer"
         Me.Button1.UseVisualStyleBackColor = True
         '
+        'ClassMyTreeView1
+        '
+        Me.ClassMyTreeView1.Location = New System.Drawing.Point(403, 88)
+        Me.ClassMyTreeView1.Name = "ClassMyTreeView1"
+        Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
+        Me.ClassMyTreeView1.TabIndex = 27
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(12, 33)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(62, 13)
+        Me.Label1.TabIndex = 33
+        Me.Label1.Text = "User Mode:"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 566)
+        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.DataGridView3)
@@ -424,7 +430,6 @@ Partial Class Form1
         Me.Controls.Add(Me.btnSaveRemux)
         Me.Controls.Add(Me.btnSubtitleEdit)
         Me.Controls.Add(Me.btnMPV)
-        Me.Controls.Add(Me.rbReview)
         Me.Controls.Add(Me.rbCreate)
         Me.Controls.Add(Me.rbRemux)
         Me.Controls.Add(Me.lbxDirectory)
@@ -454,7 +459,6 @@ Partial Class Form1
     Friend WithEvents FolderBrowserDialog1 As FolderBrowserDialog
     Friend WithEvents rbRemux As RadioButton
     Friend WithEvents rbCreate As RadioButton
-    Friend WithEvents rbReview As RadioButton
     Friend WithEvents btnMPV As Button
     Friend WithEvents btnSubtitleEdit As Button
     Friend WithEvents btnSaveRemux As Button
@@ -492,4 +496,6 @@ Partial Class Form1
     Friend WithEvents Column3 As DataGridViewTextBoxColumn
     Friend WithEvents Column4 As DataGridViewCheckBoxColumn
     Friend WithEvents Button1 As Button
+    Friend WithEvents RunRemuxToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents Label1 As Label
 End Class

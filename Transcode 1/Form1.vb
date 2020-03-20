@@ -540,7 +540,6 @@ Public Class Form1
         If strSource = "Load" Then
             blnRemux = rbRemux.Checked
             blnCreate = rbCreate.Checked
-            blnReview = rbReview.Checked
             If blnRemux Then
                 strSource = "Remux"
             ElseIf blnCreate Then
@@ -579,8 +578,6 @@ Public Class Form1
             DataGridView1.Columns(4).Visible = False
         ElseIf rbCreate.Checked Then
             DataGridView1.Columns(4).Visible = True
-        ElseIf rbReview.Checked Then
-            DataGridView1.Columns(4).Visible = True
         End If
     End Sub
 
@@ -605,24 +602,45 @@ Public Class Form1
         Dim strSubtitle
         Dim strPathRemux As String
         Dim strPathRemuxMovie As String
+        Dim strFileName
+        Dim strTrackOrder As String
+        Dim arrTrackOrder
         strPathRemux = txtInputDirectory.Text & "\Remux"
-        strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
+        strPathRemuxMovie = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
 
-        strAlwaysOptions = " --no-buttons -no-attachments "
+        strAlwaysOptions = " --no-buttons --no-attachments "
 
         'Deal with video tracks
         'Currently ther is only one video track per title so there is no need for real processing
-        strDefaultVideo = "--Default-track 0"
+        strDefaultVideo = "--default-track 0"
         strVideo = "--Video-tracks 0"
 
         'Deal with Audio Tracks
-        For Each objItem As DataGridViewRow In DataGridView2.SelectedRows 'Audio tracks
+        Dim arraylist As ArrayList = New ArrayList()
+        For i = 0 To DataGridView2.SelectedRows.Count - 1
+            arraylist.Insert(0, DataGridView2.SelectedRows(i))
+        Next
+        For Each objItem As DataGridViewRow In arraylist 'Audio tracks
             If objItem.Cells(5).Value = "True" Then
                 strDefaultAudio = "--default-track " & objItem.Cells(6).Value
             End If
             strAudio = AudioRemuxString(strAudio, objItem.Cells(6).Value)
         Next
 
+        'check if the audio tracks are in a different order
+        strTrackOrder = Replace(Split(strAudio, " ")(1), ",", "")
+        If Not isAlphabaticOrder(strTrackOrder) Then
+            arrTrackOrder = Split(Split(strAudio, " ")(1), ",")
+            strTrackOrder = "--track-order "
+            For i = 0 To UBound(arrTrackOrder)
+                strTrackOrder = strTrackOrder & "0:" & arrTrackOrder(i) & ","
+            Next
+            If Strings.Right(strTrackOrder, 1) = "," Then
+                strTrackOrder = Strings.Left(strTrackOrder, Len(strTrackOrder) - 1)
+            End If
+        Else
+            strTrackOrder = ""
+        End If
         'Deal with Subtitle Tracks
         For Each objItem As DataGridViewRow In DataGridView3.SelectedRows 'Subtitle tracks
             If objItem.Cells(4).Value = True Then
@@ -631,9 +649,23 @@ Public Class Form1
             strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
         Next
 
-        CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv" & Chr(34) & " --title '' " & strDefaultVideo & " " _
+        'create the proper file name
+        If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
+            strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
+        Else
+            strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
+        End If
+
+        If strTrackOrder <> "" Then
+            CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+            & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strAlwaysOptions & " " _
+            & Chr(34) & strPathRemuxMovie & "\" & strFileName & Chr(34)
+
+        Else
+            CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
             & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strAlwaysOptions & " " _
-            & Chr(34) & strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv" & Chr(34)
+            & Chr(34) & strPathRemuxMovie & "\" & strFileName & Chr(34)
+        End If
 
     End Function
 
@@ -657,7 +689,7 @@ Public Class Form1
         If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
             strPathRemuxFile = strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & ".txt"
         Else
-            strPathRemuxFile = strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & ClassMyTreeView1.SelectedNode.Parent.Text & ".txt"
+            strPathRemuxFile = strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Text) & ".txt"
         End If
 
         'check for "Remux" folder and create if needed
@@ -707,7 +739,7 @@ Public Class Form1
 
     Function SubtitleRemuxString(strSubtitle, Item)
         If strSubtitle = "" Then
-            strSubtitle = "--Subtitle-tracks " & Item
+            strSubtitle = "--subtitle-tracks " & Item
         Else
             strSubtitle = strSubtitle & "," & Item
         End If
@@ -830,4 +862,38 @@ Public Class Form1
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Process.Start(Chr(34) & txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & Chr(34))
     End Sub
+
+    Private Sub RunRemuxToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RunRemuxToolStripMenuItem.Click
+        If txtInputDirectory.Text = "" Then
+            MsgBox("No Input Directory Chosen", vbExclamation, "Error")
+            Exit Sub
+        End If
+        If tbxOutputDirectory.Text = "" Then
+            MsgBox("No Output Directory Chosen", vbExclamation, "Error")
+            Exit Sub
+        End If
+
+        Dim box = New RunRemux()
+        box.ShowDialog()
+    End Sub
+
+    Private Shared Function isAlphabaticOrder(ByVal s As String) As Boolean
+        Dim n As Integer = s.Length
+        Dim c As Char() = New Char(n - 1) {}
+
+        For i As Integer = 0 To n - 1
+            c(i) = s(i)
+        Next
+
+        Array.Sort(c)
+
+        For i As Integer = 0 To n - 1
+            If c(i) <> s(i) Then Return False
+        Next
+
+        Return True
+    End Function
+
+
+
 End Class
