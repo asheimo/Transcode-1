@@ -61,7 +61,6 @@ Public Class RunRemux
             strArgs = Mid(My.Computer.FileSystem.ReadAllText(txt), Len(strCommand) + 1)
             arrFilePart1 = Split(My.Computer.FileSystem.ReadAllText(txt), "--")
             Dim strOutputFile = Mid(Replace(arrFilePart1(1), Chr(34), ""), InStr(Replace(arrFilePart1(1), Chr(34), ""), " ") + 1)
-            'UpdateTextBox(strCommand & strArgs)
             'check for movie folder and create if needed
             strOutputDirectory = Strings.Left(strOutputFile, InStrRev(strOutputFile, "\") - 1)
             If Not Directory.Exists(strOutputDirectory) Then
@@ -75,7 +74,6 @@ Public Class RunRemux
         oStartInfo.RedirectStandardOutput = True
         oProcess.StartInfo = oStartInfo
         AddHandler oProcess.OutputDataReceived, AddressOf StreamView
-        'oProcess.WaitForExit()
         oProcess.Start()
         oProcess.BeginOutputReadLine()
         While Not oProcess.HasExited

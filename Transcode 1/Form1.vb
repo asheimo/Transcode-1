@@ -33,11 +33,12 @@ Public Class Form1
         Dim intNode As Integer
         Dim strName, strName2  'temp variable
         Dim blnRemux As Boolean
-        'Clear existing objects
 
+        'Clear existing objects
         blnRemux = rbRemux.Checked
         ClassMyTreeView1.Nodes.Clear()
         CleanUp()
+
         ' Create a FileSystemObject  
         objFSO = CreateObject("Scripting.FileSystemObject")
 
@@ -169,9 +170,6 @@ Public Class Form1
                 End If
             End If
         End If
-        'If e.Node.ForeColor = Color.Green Then
-        '    e.Node.ForeColor = Color.Empty
-        'End If
     End Sub
 
     Private Sub ClassMyTreeView1_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles ClassMyTreeView1.AfterSelect
@@ -192,7 +190,6 @@ Public Class Form1
         Dim strPathRemuxFile As String
         Dim arrRemuxSettings
         Dim arrTracks
-        'Dim fileReader As String
 
         strPathRemux = txtInputDirectory.Text & "\Remux"
         strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
@@ -272,7 +269,6 @@ Public Class Form1
         Dim blnForced As Boolean
         Dim strDefault
         Dim strForced
-        'Dim strTrack
 
         Select Case strType
             Case "Video"
@@ -286,7 +282,7 @@ Public Class Form1
                         Case "height"
                             strHeight = arrStream(i, 1)
                         Case "r_frame_rate"
-                            strFPS = arrStream(i, 1) 'Split(arrStream(i, 1), "/")(1) & "/" & Split(arrStream(i, 1), "/")(0)
+                            strFPS = arrStream(i, 1)
                         Case "disposition:default"
                             If arrStream(i, 1) = 0 Then
                                 blnDefault = False
@@ -436,9 +432,6 @@ Public Class Form1
     End Sub
 
     Private Sub ProcessAfterSelect(txt)
-
-        'CleanUp()
-
         Dim i
         Dim intCount As Integer
         Dim oProcess As New Process()
@@ -478,7 +471,6 @@ Public Class Form1
     End Sub
 
     Private Sub CleanUp()
-        'ClassMyTreeView1.Nodes.Clear()
         DataGridView1.Rows.Clear()
         DataGridView2.Rows.Clear()
         DataGridView3.Rows.Clear()
@@ -518,7 +510,6 @@ Public Class Form1
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             End If
             Dim oProcess As New Process()
-            'Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             Dim oStartInfo As New ProcessStartInfo("C:\bin\Subtitle Edit\SubtitleEdit", Chr(34) & strText & Chr(34))
             oStartInfo.UseShellExecute = True
             oProcess.StartInfo = oStartInfo
@@ -527,30 +518,12 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
-        'Dim oProcess As New Process()
-        'Dim oStartInfo As New ProcessStartInfo("FFProbe", " -version")
-        'Dim strCheck, lreturn
-        'oStartInfo.CreateNoWindow = True
-        'oStartInfo.UseShellExecute = False
-        'oStartInfo.RedirectStandardOutput = True
-        'oProcess.StartInfo = oStartInfo
-        'oProcess.Start()
-        'Using oStreamReader As System.IO.StreamReader = oProcess.StandardOutput
-        '    strCheck = oStreamReader.ReadToEnd()
-        '    If Strings.Left(strCheck, 15) <> "ffprobe version" Then
-        '        lreturn = MsgBox("Application FFProbe could not be found. Make sure that it is included on your Path settings", vbAbort, "Critial Error")
-        '        If lreturn = vbAbort Then Close()
-        '    End If
-        'End Using
         rbRemux.Checked = True
         ValidateButtons("Load", True)
-        'ValidateColumns()
-
     End Sub
 
     Private Sub rbRemux_CheckedChanged(sender As Object, e As EventArgs) Handles rbRemux.CheckedChanged
         ValidateButtons(sender.text, sender.checked)
-        'ValidateColumns()
     End Sub
     Private Sub ValidateButtons(strSource As String, State As Boolean)
         Dim blnRemux As Boolean
@@ -704,7 +677,6 @@ Public Class Form1
     Private Sub AboutToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem1.Click
         Dim box = New AboutBox1()
         box.ShowDialog()
-        'MsgBox("Version: " & My.Application.Info.Version.ToString, vbOKOnly, "Version")
     End Sub
 
     Sub SaveRemuxFile(strMKVMerge)
