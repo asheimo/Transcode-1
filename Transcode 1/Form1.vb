@@ -252,7 +252,9 @@ Public Class Form1
                 GetStreamCount = oStreamReader.ReadToEnd()
             Loop
         End Using
+#Disable Warning BC42105 ' Function 'GetStreamCount' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
     End Function
+#Enable Warning BC42105 ' Function 'GetStreamCount' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
 
     Function FormatInfo(ByRef Arr(), ByRef strType, strTrack)
         Dim i
@@ -296,9 +298,15 @@ Public Class Form1
                 Next
                 Dim DGR As Integer = DataGridView1.Rows.Add
                 With DataGridView1
+#Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(0).Value = strName
+#Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(1).Value = strHeight & "p"
+#Enable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strFPS
+#Enable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(3).Value = blnDefault
                 End With
 
@@ -339,10 +347,18 @@ Public Class Form1
                 Dim DGR As Integer = DataGridView2.Rows.Add
                 With DataGridView2
                     .Rows(DGR).Cells(0).Value = strName
+#Disable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(1).Value = strChannelLayout
+#Enable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strBitRate
+#Enable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(3).Value = strLanguage
+#Enable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(4).Value = strTitle
+#Enable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(5).Value = blnDefault
                     .Rows(DGR).Cells(6).Value = strTrack
                 End With
@@ -377,7 +393,9 @@ Public Class Form1
                 With DataGridView3
                     .Rows(DGR).Cells(0).Value = strName
                     .Rows(DGR).Cells(1).Value = strLanguage
+#Disable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strNumberOfFrames
+#Enable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(3).Value = strTitle
                     .Rows(DGR).Cells(4).Value = blnDefault
                     .Rows(DGR).Cells(5).Value = blnForced
@@ -391,7 +409,9 @@ Public Class Form1
             Dim z = 0
         End If
 
+#Disable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
     End Function
+#Enable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
 
     Function SplitArray(ByRef Arr())
         Dim i
@@ -624,7 +644,9 @@ Public Class Form1
             If objItem.Cells(5).Value = "True" Then
                 strDefaultAudio = "--default-track " & objItem.Cells(6).Value
             End If
+#Disable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
             strAudio = AudioRemuxString(strAudio, objItem.Cells(6).Value)
+#Enable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
         Next
 
         'check if the audio tracks are in a different order
@@ -646,7 +668,9 @@ Public Class Form1
             If objItem.Cells(4).Value = True Then
                 strDefaultSubtitle = "--default-track " & objItem.Cells(6).Value
             End If
+#Disable Warning BC42104 ' Variable 'strSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
             strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
+#Enable Warning BC42104 ' Variable 'strSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
         Next
 
         'create the proper file name
@@ -657,9 +681,13 @@ Public Class Form1
         End If
 
         If strTrackOrder <> "" Then
+#Disable Warning BC42104 ' Variable 'strDefaultSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strDefaultAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
             CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
             & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strAlwaysOptions & " " _
             & Chr(34) & strPathRemuxMovie & "\" & strFileName & Chr(34)
+#Enable Warning BC42104 ' Variable 'strDefaultAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Enable Warning BC42104 ' Variable 'strDefaultSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
 
         Else
             CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _

@@ -42,8 +42,12 @@ Public Class RunRemux
     End Sub
 
     Private Sub RunRemux(txt, blnCopy)
+#Disable Warning BC42024 ' Unused local variable: 'i'.
         Dim i
+#Enable Warning BC42024 ' Unused local variable: 'i'.
+#Disable Warning BC42024 ' Unused local variable: 'intCount'.
         Dim intCount As Integer
+#Enable Warning BC42024 ' Unused local variable: 'intCount'.
         Dim strOutputDirectory
         Dim arrFilePart1()
         Dim strCommand
