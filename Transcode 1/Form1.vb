@@ -10,9 +10,11 @@ Public Class Form1
 
         objFSO = CreateObject("Scripting.FileSystemObject")
         lbxDirectory.Items.Clear()
-
+        txtInputDirectory.Clear()
         If (FolderBrowserDialog1.ShowDialog() = DialogResult.OK) Then
             txtInputDirectory.Text = FolderBrowserDialog1.SelectedPath
+        Else
+            Exit Sub
         End If
 
         For Each objFolder In objFSO.GetFolder(txtInputDirectory.Text).SubFolders
@@ -174,22 +176,30 @@ Public Class Form1
 
     Private Sub ClassMyTreeView1_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles ClassMyTreeView1.AfterSelect
         If e.Node.Parent Is Nothing Then
-            ProcessAfterSelect(e.Node.Text & ".mkv")
+            ProcessAfterSelect(e.Node.Text & ".mkv", Mode)
             ShowSelected(e.Node.Text)
         Else
-            ProcessAfterSelect(e.Node.Text & "-" & LCase(e.Node.Parent.Name) & ".mkv")
+            ProcessAfterSelect(e.Node.Text & "-" & LCase(e.Node.Parent.Name) & ".mkv", Mode)
             ShowSelected(e.Node.Text & "-" & LCase(e.Node.Parent.Name))
         End If
-
-
     End Sub
 
+    Function Mode()
+        If rbRemux.Checked Then
+            Mode = "Remux"
+        ElseIf rbCreate.Checked Then
+            Mode = "Create"
+        Else
+            Mode = "Remux"
+        End If
+    End Function
     Sub ShowSelected(strRemuxFileName)
         Dim strPathRemux As String
         Dim strPathRemuxMovie As String
         Dim strPathRemuxFile As String
         Dim arrRemuxSettings
         Dim arrTracks
+        Dim arrDetails()
 
         strPathRemux = txtInputDirectory.Text & "\Remux"
         strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
@@ -220,17 +230,49 @@ Public Class Form1
                 arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
                 For Each Track In arrTracks
                     For Each info As DataGridViewRow In DataGridView2.Rows
-                        If info.Cells(6).Value = Track Then
+                        If info.Cells(6).Value = Track And Not info.Cells(5).Value = True Then
+                            info.Cells(5).Value = False
+                        Else
                             info.Cells(5).Value = True
                         End If
                     Next
                     For Each info As DataGridViewRow In DataGridView3.Rows
-                        If info.Cells(6).Value = Track Then
+                        If info.Cells(6).Value = Track And Not info.Cells(4).Value = True Then
+                            info.Cells(4).Value = False
+                        Else
                             info.Cells(4).Value = True
                         End If
                     Next
                 Next
+            ElseIf Strings.Left(LCase(arrSetting), 11) = "track-order" Then
+                arrTracks = Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", "")
+                'Dim output(DataGridView2.Columns.Count * If(DataGridView2.NewRowIndex <> -1, DataGridView2.Rows.Count - 1, DataGridView2.Rows.Count) - 1) As String
+                Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
+                Dim i As Integer = 0
+                For Each row As DataGridViewRow In DataGridView2.Rows
+                    Dim j As Integer = 0
+                    'For Each column In DataGridView2.Columns
+                    'If row.IsNewRow Then Continue For
+                    For Each cell As DataGridViewCell In row.Cells
+                        output(i, j) = cell.Value.ToString
+                        j = j + 1
+                    Next
+                    'Next
+                    i = i + 1
+                Next
 
+                DataGridView2.Rows.Clear()
+                ReDim arrDetails(UBound(output, 2))
+                For Each Track In arrTracks
+                    For i = 0 To UBound(output)
+                        If output(i, 6) = Track Then
+                            For j = 0 To UBound(output, 2)
+                                arrDetails(j) = output(i, j).ToString
+                            Next
+                            RepopulateInfo(arrDetails, "Audio", output(i, 6))
+                        End If
+                    Next i
+                Next
             End If
         Next
 
@@ -253,7 +295,7 @@ Public Class Form1
     End Function
 #Enable Warning BC42105 ' Function 'GetStreamCount' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
 
-    Function FormatInfo(ByRef Arr(), ByRef strType, strTrack)
+    Function RepopulateInfo(ByRef Arr(), ByRef strType, strTrack)
         Dim i
         Dim strName
         Dim strWidth
@@ -307,39 +349,13 @@ Public Class Form1
                 End With
 
             Case "Audio"
-                arrStream = SplitArray(Arr)
-                For i = 0 To UBound(arrStream)
-                    Select Case arrStream(i, 0)
-                        Case "codec_name"
-                            strName = arrStream(i, 1)
-                        Case "profile"
-                            If strName = "dts" Then
-                                strName = strName & " (" & arrStream(i, 1) & ")"
-                            End If
-                        Case "channel_layout"
-                            strChannelLayout = arrStream(i, 1)
-                        Case "bit_rate"
-                            If arrStream(i, 1) <> "N/A" Then
-                                strBitRate = arrStream(i, 1) / 1000
-                            End If
-                        Case "tag:BPS-eng"
-                            If arrStream(i, 1) <> "" Then
-                                strBitRate = arrStream(i, 1) / 1000
-                            End If
-                        Case "tag:language"
-                            strLanguage = arrStream(i, 1)
-                        Case "tag:title"
-                            strTitle = arrStream(i, 1)
-                        Case "disposition:default"
-                            If arrStream(i, 1) = 0 Then
-                                blnDefault = False
-                            Else
-                                blnDefault = True
-                            End If
-                        Case "index"
-                            strTrack = arrStream(i, 1)
-                    End Select
-                Next
+                strName = Arr(0)
+                strChannelLayout = Arr(1)
+                strBitRate = Arr(2)
+                strLanguage = Arr(3)
+                strTitle = Arr(4)
+                blnDefault = Arr(5)
+                strTrack = Arr(6)
                 Dim DGR As Integer = DataGridView2.Rows.Add
                 With DataGridView2
                     .Rows(DGR).Cells(0).Value = strName
@@ -388,16 +404,196 @@ Public Class Form1
                 Dim DGR As Integer = DataGridView3.Rows.Add
                 With DataGridView3
                     .Rows(DGR).Cells(0).Value = strName
+#Disable Warning BC42104 ' Variable is used before it has been assigned a value
                     .Rows(DGR).Cells(1).Value = strLanguage
+#Enable Warning BC42104 ' Variable is used before it has been assigned a value
 #Disable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strNumberOfFrames
 #Enable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable is used before it has been assigned a value
                     .Rows(DGR).Cells(3).Value = strTitle
+#Enable Warning BC42104 ' Variable is used before it has been assigned a value
                     .Rows(DGR).Cells(4).Value = blnDefault
                     .Rows(DGR).Cells(5).Value = blnForced
                     .Rows(DGR).Cells(6).Value = strTrack
                 End With
 
+        End Select
+
+        If Arr.Contains("codec_type=video") Then
+            arrStream = SplitArray(Arr)
+            Dim z = 0
+        End If
+
+#Disable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
+    End Function
+#Enable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
+
+    Function FormatInfo(ByRef Arr(), ByRef strType, strTrack, strMode)
+        Dim i
+        Dim strName
+        Dim strWidth
+        Dim strHeight
+        Dim strFPS
+        Dim strChannelLayout
+        Dim strBitRate
+        Dim strLanguage
+        Dim strTitle
+        Dim strNumberOfFrames
+        Dim arrStream(Arr.Length - 1, 1)
+        Dim blnDefault As Boolean
+        Dim blnForced As Boolean
+        Dim strDefault
+        Dim strForced
+
+        Select Case strType
+            Case "Video"
+                arrStream = SplitArray(Arr)
+                For i = 0 To UBound(arrStream)
+                    Select Case arrStream(i, 0)
+                        Case "codec_name"
+                            strName = arrStream(i, 1)
+                        Case "width"
+                            strWidth = arrStream(i, 1)
+                        Case "height"
+                            strHeight = arrStream(i, 1)
+                        Case "r_frame_rate"
+                            strFPS = arrStream(i, 1)
+                        Case "disposition:default"
+                            If arrStream(i, 1) = 0 Then
+                                blnDefault = False
+                            Else
+                                blnDefault = True
+                            End If
+
+                    End Select
+                Next
+                If strMode = "Remux" Then
+                    Dim DGR As Integer = DataGridView1.Rows.Add
+                    With DataGridView1
+#Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(0).Value = strName
+#Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(1).Value = strHeight & "p"
+#Enable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(2).Value = strFPS
+#Enable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(3).Value = blnDefault
+                    End With
+                ElseIf strMode = "Create" Then
+                    Dim DGR As Integer = DataGridView4.Rows.Add
+                    With DataGridView4
+#Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(0).Value = strName & " / " & strHeight & "p" & " / " & strFPS
+#Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
+                    End With
+                End If
+            Case "Audio"
+                arrStream = SplitArray(Arr)
+                For i = 0 To UBound(arrStream)
+                    Select Case arrStream(i, 0)
+                        Case "codec_name"
+                            strName = arrStream(i, 1)
+                        Case "profile"
+                            If strName = "dts" Then
+                                strName = strName & " (" & arrStream(i, 1) & ")"
+                            End If
+                        Case "channel_layout"
+                            strChannelLayout = arrStream(i, 1)
+                        Case "bit_rate"
+                            If arrStream(i, 1) <> "N/A" Then
+                                strBitRate = arrStream(i, 1) / 1000
+                            End If
+                        Case "tag:BPS-eng"
+                            If arrStream(i, 1) <> "" Then
+                                strBitRate = arrStream(i, 1) / 1000
+                            End If
+                        Case "tag:language"
+                            strLanguage = arrStream(i, 1)
+                        Case "tag:title"
+                            strTitle = arrStream(i, 1)
+                        Case "disposition:default"
+                            If arrStream(i, 1) = 0 Then
+                                blnDefault = False
+                            Else
+                                blnDefault = True
+                            End If
+                        Case "index"
+                            strTrack = arrStream(i, 1)
+                    End Select
+                Next
+                If strMode = "Remux" Then
+                    Dim DGR As Integer = DataGridView2.Rows.Add
+                    With DataGridView2
+                        .Rows(DGR).Cells(0).Value = strName
+#Disable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(1).Value = strChannelLayout
+#Enable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(2).Value = strBitRate
+#Enable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(3).Value = strLanguage
+#Enable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
+#Disable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(4).Value = strTitle
+#Enable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(5).Value = blnDefault
+                        .Rows(DGR).Cells(6).Value = strTrack
+                    End With
+                ElseIf strMode = "Create" Then
+                    Dim DGR As Integer = DataGridView5.Rows.Add
+                    With DataGridView5
+                        .Rows(DGR).Cells(0).Value = strName & " / " & strChannelLayout & " / " & strBitRate & " / " & strTitle & " / " & strLanguage
+                    End With
+                End If
+            Case "Subtitle"
+                arrStream = SplitArray(Arr)
+                For i = 0 To UBound(arrStream)
+                    Select Case arrStream(i, 0)
+                        Case "codec_name"
+                            strName = arrStream(i, 1)
+                        Case "tag:NUMBER_OF_FRAMES-eng"
+                            strNumberOfFrames = arrStream(i, 1)
+                        Case "tag:language"
+                            strLanguage = arrStream(i, 1)
+                        Case "tag:NUMBER_OF_FRAMES-eng"
+                            strNumberOfFrames = arrStream(i, 1)
+                        Case "tag:title"
+                            strTitle = arrStream(i, 1)
+                        Case "disposition:default"
+                            If arrStream(i, 1) = 1 Then
+                                strDefault = True
+                            End If
+                        Case "disposition:forced"
+                            If arrStream(i, 1) = 1 Then
+                                strForced = True
+                            End If
+                        Case "index"
+                            strTrack = arrStream(i, 1)
+                    End Select
+                Next
+                If strMode = "Remux" Then
+                    Dim DGR As Integer = DataGridView3.Rows.Add
+                    With DataGridView3
+                        .Rows(DGR).Cells(0).Value = strName
+                        .Rows(DGR).Cells(1).Value = strLanguage
+#Disable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(2).Value = strNumberOfFrames
+#Enable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
+                        .Rows(DGR).Cells(3).Value = strTitle
+                        .Rows(DGR).Cells(4).Value = blnDefault
+                        .Rows(DGR).Cells(5).Value = blnForced
+                        .Rows(DGR).Cells(6).Value = strTrack
+                    End With
+                ElseIf strMode = "Create" Then
+                    Dim DGR As Integer = DataGridView6.Rows.Add
+                    With DataGridView6
+                        .Rows(DGR).Cells(0).Value = strName & " / " & strNumberOfFrames & " / " & blnForced.ToString & " / " & If(strTitle = "", "-", strTitle)
+                    End With
+                End If
         End Select
 
         If Arr.Contains("codec_type=video") Then
@@ -431,7 +627,7 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub ProcessAfterSelect(txt)
+    Private Sub ProcessAfterSelect(txt, strMode)
         Dim i
         Dim intCount As Integer
         Dim oProcess As New Process()
@@ -461,11 +657,11 @@ Public Class Form1
             Dim lReturn As String = Array.Find(arrStream, Function(x) (x.StartsWith("codec_type")))
             Select Case lReturn
                 Case "codec_type=video"
-                    FormatInfo(arrDetails(i), "Video", i)
+                    FormatInfo(arrDetails(i), "Video", i, strMode)
                 Case "codec_type=audio"
-                    FormatInfo(arrDetails(i), "Audio", i)
+                    FormatInfo(arrDetails(i), "Audio", i, strMode)
                 Case "codec_type=subtitle"
-                    FormatInfo(arrDetails(i), "Subtitle", i)
+                    FormatInfo(arrDetails(i), "Subtitle", i, strMode)
             End Select
         Next
     End Sub
@@ -474,6 +670,9 @@ Public Class Form1
         DataGridView1.Rows.Clear()
         DataGridView2.Rows.Clear()
         DataGridView3.Rows.Clear()
+        DataGridView4.Rows.Clear()
+        DataGridView5.Rows.Clear()
+        DataGridView6.Rows.Clear()
     End Sub
 
     Private Sub btnMPV_Click(sender As Object, e As EventArgs) Handles btnMPV.Click
@@ -527,41 +726,124 @@ Public Class Form1
     End Sub
     Private Sub ValidateButtons(strSource As String, State As Boolean)
         Dim blnRemux As Boolean
-        Dim blnCreate As Boolean
-        Dim blnReview As Boolean
 
         If strSource = "Load" Then
             blnRemux = rbRemux.Checked
-            blnCreate = rbCreate.Checked
             If blnRemux Then
                 strSource = "Remux"
-            ElseIf blnCreate Then
-                strSource = "Create"
-            ElseIf blnReview Then
-                strSource = "Review"
             End If
         End If
 
-        If strSource = "Remux" And State = False Then
-            With btnMPV
-                .Enabled = False
-                .Visible = False
-            End With
-            With btnSubtitleEdit
-                .Enabled = False
-                .Visible = False
-            End With
-        Else
-            With btnMPV
-                .Enabled = True
-                .Visible = True
-            End With
-            With btnSubtitleEdit
-                .Enabled = True
-                .Visible = True
-            End With
+        Select Case strSource
+            Case "Transcode"
+                ClassMyTreeView1.Nodes.Clear()
+                lbxDirectory.Items.Clear()
+                tbxOutputDirectory.Clear()
+                txtInputDirectory.Clear()
+                CleanUp()
+                With btnMPV
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With btnSubtitleEdit
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With Button1
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With btnSaveRemux
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With btnTranscode
+                    .Enabled = True
+                    .Visible = True
+                End With
 
-        End If
+                'Hide Remux grids
+                With DataGridView1
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView2
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView3
+                    .Enabled = False
+                    .Visible = False
+                End With
+
+                'Show Transcode grids
+                With DataGridView4
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView5
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView6
+                    .Enabled = True
+                    .Visible = True
+                End With
+            Case "Remux"
+                ClassMyTreeView1.Nodes.Clear()
+                lbxDirectory.Items.Clear()
+                tbxOutputDirectory.Clear()
+                txtInputDirectory.Clear()
+                CleanUp()
+                With btnMPV
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With btnSubtitleEdit
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With Button1
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With btnSaveRemux
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With btnTranscode
+                    .Enabled = False
+                    .Visible = False
+                End With
+
+                'Show Remux grids
+                With DataGridView1
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView2
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView3
+                    .Enabled = True
+                    .Visible = True
+                End With
+
+                'Hide Transcode grids
+                With DataGridView4
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView5
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView6
+                    .Enabled = False
+                    .Visible = False
+                End With
+        End Select
 
     End Sub
 
@@ -775,6 +1057,8 @@ Public Class Form1
 
         If (FolderBrowserDialog1.ShowDialog() = DialogResult.OK) Then
             tbxOutputDirectory.Text = FolderBrowserDialog1.SelectedPath
+        Else
+            Exit Sub
         End If
 
     End Sub
@@ -894,6 +1178,7 @@ Public Class Form1
         Return True
     End Function
 
-
-
+    Private Sub rbCreate_CheckedChanged(sender As Object, e As EventArgs) Handles rbCreate.CheckedChanged
+        ValidateButtons(sender.text, sender.checked)
+    End Sub
 End Class

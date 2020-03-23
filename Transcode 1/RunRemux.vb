@@ -1,17 +1,5 @@
-﻿Imports System.Data : Imports System.Diagnostics
-Imports System.Drawing : Imports Microsoft.VisualBasic
-Imports Microsoft.Win32 : Imports System.Net : Imports System.Net.WebClient
-Imports System.Object : Imports System.Xml : Imports System.Windows.Forms
-Imports System.Reflection : Imports System.Runtime.InteropServices
-Imports System.Windows : Imports System.Windows.Input : Imports System.Text
-Imports System.Threading : Imports System.Threading.Tasks : Imports System.CodeDom
-Imports System.CodeDom.Compiler : Imports System.Globalization
-Imports System.IO : Imports System.Collections : Imports System : Imports System.Web
-Imports System.Collections.Generic : Imports System.Drawing.Bitmap
-Imports System.MarshalByRefObject : Imports System.Drawing.Icon
-Imports System.Attribute : Imports System.ComponentModel : Imports Microsoft.CSharp
-Imports System.Drawing.Drawing2D
-
+﻿Imports System.Runtime.InteropServices
+Imports System.IO
 Public Class RunRemux
     Inherits Form
     <DllImport("user32.dll", CharSet:=CharSet.Auto)>
