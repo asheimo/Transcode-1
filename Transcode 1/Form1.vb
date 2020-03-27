@@ -11,6 +11,8 @@ Public Class Form1
         objFSO = CreateObject("Scripting.FileSystemObject")
         lbxDirectory.Items.Clear()
         txtInputDirectory.Clear()
+        ClassMyTreeView1.Nodes.Clear()
+        CleanUp()
         If (FolderBrowserDialog1.ShowDialog() = DialogResult.OK) Then
             txtInputDirectory.Text = FolderBrowserDialog1.SelectedPath
         Else
@@ -18,7 +20,7 @@ Public Class Form1
         End If
 
         For Each objFolder In objFSO.GetFolder(txtInputDirectory.Text).SubFolders
-            If objFolder.name = "Remux" Or objFolder.name = "Transcode Settings" Then
+            If objFolder.name = "Remux" Or objFolder.name = "Transcode" Then
             Else
                 lbxDirectory.Items.Add(objFolder.Name)
             End If
@@ -58,7 +60,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("featurette")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 15))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -66,7 +68,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("trailer")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 12))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -74,7 +76,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("behindthescenes")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 20))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -82,7 +84,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("deleted")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 12))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -90,7 +92,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("interview")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 14))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -98,7 +100,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("other")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 10))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -106,7 +108,7 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("scene")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 10))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
@@ -114,13 +116,13 @@ Public Class Form1
                 intNode = SearchTreeNodeParents("short")
                 With ClassMyTreeView1.Nodes(intNode - 1)
                     .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 10))
-                    If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
             Else
                 ClassMyTreeView1.Nodes.Insert(0, Strings.Left(item.name, Strings.Len(item.name) - 4))
-                If CheckRemux(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
                     ClassMyTreeView1.Nodes(0).BackColor = Color.Green
                 End If
             End If
@@ -193,20 +195,25 @@ Public Class Form1
             Mode = "Remux"
         End If
     End Function
-    Sub ShowSelected(strRemuxFileName)
-        Dim strPathRemux As String
-        Dim strPathRemuxMovie As String
-        Dim strPathRemuxFile As String
+    Sub ShowSelected(strFileName)
+        Dim strPathMode As String
+        Dim strPathModeMovie As String
+        Dim strPathModeFile As String
         Dim arrRemuxSettings
         Dim arrTracks
         Dim arrDetails()
 
-        strPathRemux = txtInputDirectory.Text & "\Remux"
-        strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
-        strPathRemuxFile = strPathRemuxMovie & "\" & strRemuxFileName & ".txt"
+        If rbRemux.Checked Then
+            strPathMode = txtInputDirectory.Text & "\Remux"
+        Else
+            strPathMode = txtInputDirectory.Text & "\Transcode"
 
-        If Not File.Exists(strPathRemuxFile) Then Exit Sub
-        arrRemuxSettings = Split(My.Computer.FileSystem.ReadAllText(strPathRemuxFile), "--")
+        End If
+        strPathModeMovie = strPathMode & "\" & lbxDirectory.SelectedItem
+        strPathModeFile = strPathModeMovie & "\" & strFileName & ".txt"
+
+        If Not File.Exists(strPathModeFile) Then Exit Sub
+        arrRemuxSettings = Split(My.Computer.FileSystem.ReadAllText(strPathModeFile), "--")
         For Each arrSetting In arrRemuxSettings
             If Strings.Left(LCase(arrSetting), 12) = "audio-tracks" Then
                 arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
@@ -255,10 +262,10 @@ Public Class Form1
                     'If row.IsNewRow Then Continue For
                     For Each cell As DataGridViewCell In row.Cells
                         output(i, j) = cell.Value.ToString
-                        j = j + 1
+                        j += 1
                     Next
                     'Next
-                    i = i + 1
+                    i += 1
                 Next
 
                 DataGridView2.Rows.Clear()
@@ -273,6 +280,9 @@ Public Class Form1
                         End If
                     Next i
                 Next
+                For Each info As DataGridViewRow In DataGridView2.Rows
+                    info.Selected = True
+                Next
             End If
         Next
 
@@ -280,10 +290,11 @@ Public Class Form1
 
     Function GetStreamCount(strText)
         Dim oProcess As New Process()
-        Dim oStartInfo As New ProcessStartInfo("FFProbe", " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & strText & Chr(34))
-        oStartInfo.CreateNoWindow = True
-        oStartInfo.UseShellExecute = False
-        oStartInfo.RedirectStandardOutput = True
+        Dim oStartInfo As New ProcessStartInfo("FFProbe", " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & strText & Chr(34)) With {
+            .CreateNoWindow = True,
+            .UseShellExecute = False,
+            .RedirectStandardOutput = True
+        }
         oProcess.StartInfo = oStartInfo
         oProcess.Start()
         Using oStreamReader As System.IO.StreamReader = oProcess.StandardOutput
@@ -485,6 +496,8 @@ Public Class Form1
                 ElseIf strMode = "Create" Then
                     Dim DGR As Integer = DataGridView4.Rows.Add
                     With DataGridView4
+                        .Columns(1).ToolTipText = "Changing Resolution Not Currently Supported"
+                        .Columns(3).ToolTipText = "Changing Frame Rate Not Currently Supported"
 #Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(0).Value = strName & " / " & strHeight & "p" & " / " & strFPS
 #Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
@@ -633,10 +646,11 @@ Public Class Form1
         Dim oProcess As New Process()
         Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & txt
         intCount = GetStreamCount(strText)
-        Dim oStartInfo As New ProcessStartInfo("FFProbe", " -loglevel quiet -show_streams -print_format csv=nokey=0 " & Chr(34) & strText & Chr(34))
-        oStartInfo.CreateNoWindow = True
-        oStartInfo.UseShellExecute = False
-        oStartInfo.RedirectStandardOutput = True
+        Dim oStartInfo As New ProcessStartInfo("FFProbe", " -loglevel quiet -show_streams -print_format csv=nokey=0 " & Chr(34) & strText & Chr(34)) With {
+            .CreateNoWindow = True,
+            .UseShellExecute = False,
+            .RedirectStandardOutput = True
+        }
         oProcess.StartInfo = oStartInfo
         ToolStripStatusLabel1.Text = "Working"
         oProcess.Start()
@@ -647,7 +661,7 @@ Public Class Form1
         Using oStreamReader As System.IO.StreamReader = oProcess.StandardOutput
             Do While Not oStreamReader.EndOfStream
                 arrDetails(i) = Split(oStreamReader.ReadLine, ",")
-                i = i + 1
+                i += 1
             Loop
         End Using
 
@@ -690,8 +704,9 @@ Public Class Form1
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             End If
             Dim oProcess As New Process()
-            Dim oStartInfo As New ProcessStartInfo("mpv", " -- " & Chr(34) & strText & Chr(34))
-            oStartInfo.UseShellExecute = True
+            Dim oStartInfo As New ProcessStartInfo("mpv", " -- " & Chr(34) & strText & Chr(34)) With {
+                .UseShellExecute = True
+            }
             oProcess.StartInfo = oStartInfo
             oProcess.Start()
         End If
@@ -709,8 +724,9 @@ Public Class Form1
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             End If
             Dim oProcess As New Process()
-            Dim oStartInfo As New ProcessStartInfo("C:\bin\Subtitle Edit\SubtitleEdit", Chr(34) & strText & Chr(34))
-            oStartInfo.UseShellExecute = True
+            Dim oStartInfo As New ProcessStartInfo("C:\bin\Subtitle Edit\SubtitleEdit", Chr(34) & strText & Chr(34)) With {
+                .UseShellExecute = True
+            }
             oProcess.StartInfo = oStartInfo
             oProcess.Start()
         End If
@@ -740,6 +756,7 @@ Public Class Form1
                 lbxDirectory.Items.Clear()
                 tbxOutputDirectory.Clear()
                 txtInputDirectory.Clear()
+                RunRemuxToolStripMenuItem.Text = "Run Transcode"
                 CleanUp()
                 With btnMPV
                     .Enabled = False
@@ -794,6 +811,7 @@ Public Class Form1
                 lbxDirectory.Items.Clear()
                 tbxOutputDirectory.Clear()
                 txtInputDirectory.Clear()
+                RunRemuxToolStripMenuItem.Text = "Run Remux"
                 CleanUp()
                 With btnMPV
                     .Enabled = True
@@ -847,27 +865,18 @@ Public Class Form1
 
     End Sub
 
-    Sub ValidateColumns()
-
-        If rbRemux.Checked Then
-            DataGridView1.Columns(4).Visible = False
-        ElseIf rbCreate.Checked Then
-            DataGridView1.Columns(4).Visible = True
-        End If
-    End Sub
-
     Private Sub btnSaveRemux_Click(sender As Object, e As EventArgs) Handles btnSaveRemux.Click
         Dim strString
         If tbxOutputDirectory.Text = "" Then
             MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
             Exit Sub
         End If
-        strString = CreateRemuxSettingsString()
+        strString = CreateCommandSettingsString()
         SaveRemuxFile(strString)
 
     End Sub
 
-    Private Function CreateRemuxSettingsString()
+    Private Function CreateCommandSettingsString()
         Dim strAlwaysOptions
         Dim strDefaultVideo
         Dim strDefaultAudio
@@ -875,81 +884,167 @@ Public Class Form1
         Dim strVideo
         Dim strAudio
         Dim strSubtitle
-        Dim strPathRemux As String
-        Dim strPathRemuxMovie As String
+        Dim strPathCommand As String
+        Dim strPathCommandMovie As String
         Dim strFileName
         Dim strTrackOrder As String
         Dim arrTrackOrder
-        strPathRemux = txtInputDirectory.Text & "\Remux"
-        strPathRemuxMovie = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
 
-        strAlwaysOptions = " --no-buttons --no-attachments "
+        'set paths
+        If rbRemux.Checked Then
+            strPathCommand = txtInputDirectory.Text & "\Remux"
+            strAlwaysOptions = " --no-buttons --no-attachments "
+        Else
+            strPathCommand = txtInputDirectory.Text & "\Transcode"
+            strAlwaysOptions = "--copy-track-names "
+        End If
+        strPathCommandMovie = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
 
-        'Deal with video tracks
-        'Currently ther is only one video track per title so there is no need for real processing
-        strDefaultVideo = "--default-track 0"
-        strVideo = "--Video-tracks 0"
 
-        'Deal with Audio Tracks
-        Dim arraylist As ArrayList = New ArrayList()
-        For i = 0 To DataGridView2.SelectedRows.Count - 1
-            arraylist.Insert(0, DataGridView2.SelectedRows(i))
-        Next
-        For Each objItem As DataGridViewRow In arraylist 'Audio tracks
-            If objItem.Cells(5).Value = "True" Then
-                strDefaultAudio = "--default-track " & objItem.Cells(6).Value
-            End If
-#Disable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
-            strAudio = AudioRemuxString(strAudio, objItem.Cells(6).Value)
-#Enable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
-        Next
+        If rbRemux.Checked Then
+            'Deal with video tracks
+            'Currently there is only one video track per title so there is no need for real processing
+            strDefaultVideo = "--default-track 0"
+            strVideo = "--Video-tracks 0"
 
-        'check if the audio tracks are in a different order
-        strTrackOrder = Replace(Split(strAudio, " ")(1), ",", "")
-        If Not isAlphabaticOrder(strTrackOrder) Then
-            arrTrackOrder = Split(Split(strAudio, " ")(1), ",")
-            strTrackOrder = "--track-order "
-            For i = 0 To UBound(arrTrackOrder)
-                strTrackOrder = strTrackOrder & "0:" & arrTrackOrder(i) & ","
+            'Deal with Audio Tracks
+            Dim arraylist As ArrayList = New ArrayList()
+            For i = 0 To DataGridView2.SelectedRows.Count - 1
+                arraylist.Insert(0, DataGridView2.SelectedRows(i))
             Next
-            If Strings.Right(strTrackOrder, 1) = "," Then
-                strTrackOrder = Strings.Left(strTrackOrder, Len(strTrackOrder) - 1)
+            For Each objItem As DataGridViewRow In arraylist 'Audio tracks
+                If objItem.Cells(5).Value = "True" Then
+                    strDefaultAudio = "--default-track " & objItem.Cells(6).Value
+                End If
+#Disable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
+                strAudio = AudioRemuxString(strAudio, objItem.Cells(6).Value)
+#Enable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
+            Next
+
+            'check if the audio tracks are in a different order
+            strTrackOrder = Replace(Split(strAudio, " ")(1), ",", "")
+            If Not isAlphabaticOrder(strTrackOrder) Then
+                arrTrackOrder = Split(Split(strAudio, " ")(1), ",")
+                strTrackOrder = "--track-order 0:0,"
+                For i = 0 To UBound(arrTrackOrder)
+                    strTrackOrder = strTrackOrder & "0:" & arrTrackOrder(i) & ","
+                Next
+                If Strings.Right(strTrackOrder, 1) = "," Then
+                    strTrackOrder = Strings.Left(strTrackOrder, Len(strTrackOrder) - 1)
+                End If
+            Else
+                strTrackOrder = ""
             End If
-        Else
-            strTrackOrder = ""
-        End If
-        'Deal with Subtitle Tracks
-        For Each objItem As DataGridViewRow In DataGridView3.SelectedRows 'Subtitle tracks
-            If objItem.Cells(4).Value = True Then
-                strDefaultSubtitle = "--default-track " & objItem.Cells(6).Value
-            End If
+            'Deal with Subtitle Tracks
+            For Each objItem As DataGridViewRow In DataGridView3.SelectedRows 'Subtitle tracks
+                If objItem.Cells(4).Value = True Then
+                    strDefaultSubtitle = "--default-track " & objItem.Cells(6).Value
+                End If
 #Disable Warning BC42104 ' Variable 'strSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
-            strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
+                strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
 #Enable Warning BC42104 ' Variable 'strSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
-        Next
+            Next
 
-        'create the proper file name
-        If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
-            strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
-        Else
-            strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
-        End If
+            'create the proper file name
+            If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
+                strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
+            Else
+                strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
+            End If
 
-        If strTrackOrder <> "" Then
+            If strTrackOrder <> "" Then
 #Disable Warning BC42104 ' Variable 'strDefaultSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
 #Disable Warning BC42104 ' Variable 'strDefaultAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
-            CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-            & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strAlwaysOptions & " " _
-            & Chr(34) & strPathRemuxMovie & "\" & strFileName & Chr(34)
+                CreateCommandSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strAlwaysOptions & " " _
+                & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
 #Enable Warning BC42104 ' Variable 'strDefaultAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
 #Enable Warning BC42104 ' Variable 'strDefaultSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
 
-        Else
-            CreateRemuxSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-            & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strAlwaysOptions & " " _
-            & Chr(34) & strPathRemuxMovie & "\" & strFileName & Chr(34)
-        End If
+            Else
+                CreateCommandSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strAlwaysOptions & " " _
+                & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
+            End If
 
+        ElseIf rbCreate.Checked Then
+            Dim arraylist As ArrayList = New ArrayList()
+            Dim strResolution As String
+            Dim strOutputFormat As String = ""
+            Dim strFrameRate As String
+            Dim strCodec As Object
+            Dim strWidth As Object
+            Dim strBitRate As Object
+            Dim strDTS As Integer
+            Dim i
+
+            'Deal with video tracks
+            For i = 0 To DataGridView4.Rows.Count - 1
+                arraylist.Insert(0, DataGridView4.Rows(i))
+            Next
+            For Each objItem As DataGridViewRow In arraylist 'Video tracks
+                strResolution = objItem.Cells(1).Value
+                If objItem.Cells(2).Value = "hevc" Then strOutputFormat = "--hevc "
+                strFrameRate = objItem.Cells(3).Value
+            Next
+
+            'Deal with Audio Tracks
+            arraylist = New ArrayList()
+            For i = 0 To DataGridView5.Rows.Count - 1
+                arraylist.Insert(0, DataGridView5.Rows(i))
+            Next
+            i = 1
+            For Each objItem As DataGridViewRow In arraylist 'Audio tracks
+                strCodec = objItem.Cells(1).Value
+                strWidth = objItem.Cells(2).Value
+                strBitRate = objItem.Cells(3).Value
+                strDTS = InStr(objItem.Cells(0).Value, "dts (DTS")
+
+                If strCodec = "Keep" And strWidth = "Keep" And strBitRate = "Keep" Then strWidth = "original"
+                If i = 1 Then
+                    strAudio = "--main-audio 1=" & strWidth & " "
+                Else
+                    strAudio = strAudio & "--add-audio " & i & "=" & strWidth & " "
+                End If
+                i += 1
+            Next
+
+            'Deal with Subtitle Tracks
+            i = 1
+            For Each objItem As DataGridViewRow In DataGridView6.Rows 'Subtitle tracks
+                If objItem.Cells(1).Value = True Then
+                    'burn subtitle
+                    If strSubtitle = "" Then
+                        strSubtitle = "--burn-subtitle " & i & " "
+                    Else
+                        strSubtitle = strSubtitle & "--burn-subtitle " & i & " "
+                    End If
+                Else
+                    'add subtitle
+                    If strSubtitle = "" Then
+                        strSubtitle = "--add-subtitle " & i & " "
+                    Else
+                        strSubtitle = strSubtitle & "--add-subtitle " & i & " "
+                    End If
+                End If
+                i += 1
+            Next
+
+            'create the proper file name
+            If strDTS <> 0 Then
+                strAlwaysOptions &= "--pass-dts "
+            End If
+            If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
+                strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
+            Else
+                strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
+            End If
+
+            CreateCommandSettingsString = "other-transcode " & strAlwaysOptions & If(strOutputFormat, "") & strAudio & strSubtitle _
+                  & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
+        Else
+            CreateCommandSettingsString = "Error"
+        End If
     End Function
 
     Private Sub ExitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
@@ -961,48 +1056,60 @@ Public Class Form1
         box.ShowDialog()
     End Sub
 
-    Sub SaveRemuxFile(strMKVMerge)
+    Sub SaveRemuxFile(strCommand)
         Dim lResult
-        Dim strPathRemux As String
-        Dim strPathRemuxMovie As String
-        Dim strPathRemuxFile As String
-        strPathRemux = txtInputDirectory.Text & "\Remux"
-        strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
-        If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
-            strPathRemuxFile = strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & ".txt"
+        Dim strPathFolder As String
+        Dim strPathFolderMovie As String
+        Dim strPathFolderFile As String
+        Dim strProcess As String
+
+        If rbRemux.Checked Then
+            strPathFolder = txtInputDirectory.Text & "\Remux"
+            strProcess = "Remux"
+        ElseIf rbCreate.Checked Then
+            strPathFolder = txtInputDirectory.Text & "\Transcode"
+            strProcess = "Transcode"
         Else
-            strPathRemuxFile = strPathRemuxMovie & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Text) & ".txt"
+            MsgBox("Error, Aborting Save", vbCritical, "Error")
+            Exit Sub
         End If
 
-        'check for "Remux" folder and create if needed
-        If Not Directory.Exists(strPathRemux) Then
-            Directory.CreateDirectory(strPathRemux)
+        strPathFolderMovie = strPathFolder & "\" & lbxDirectory.SelectedItem
+        If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
+            strPathFolderFile = strPathFolderMovie & "\" & ClassMyTreeView1.SelectedNode.Text & ".txt"
+        Else
+            strPathFolderFile = strPathFolderMovie & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Text) & ".txt"
+        End If
+
+        'check for "Remux" or "Transcode" folder and create if needed
+        If Not Directory.Exists(strPathFolder) Then
+            Directory.CreateDirectory(strPathFolder)
         End If
 
         'check for movie folder and create if needed
-        If Not Directory.Exists(strPathRemuxMovie) Then
-            Directory.CreateDirectory(strPathRemuxMovie)
+        If Not Directory.Exists(strPathFolderMovie) Then
+            Directory.CreateDirectory(strPathFolderMovie)
         End If
 
         'check for existing settings and ask to overwrite if needed
-        If File.Exists(strPathRemuxFile) Then
-            lResult = MsgBox("Remux Settings Already Exist. Overwrite", vbYesNo, "Remux Settings")
+        If File.Exists(strPathFolderFile) Then
+            lResult = MsgBox(strProcess & " Settings Already Exist. Overwrite", vbYesNo, strProcess & " Settings")
             If lResult = vbYes Then
                 'create file and save settings
-                Dim ObjFS As FileStream = File.Create(strPathRemuxFile)
+                Dim ObjFS As FileStream = File.Create(strPathFolderFile)
 
                 ' Add text to the file.
-                Dim info As Byte() = New UTF8Encoding(True).GetBytes(strMKVMerge) 'here is where the text goes
+                Dim info As Byte() = New UTF8Encoding(True).GetBytes(strCommand) 'here is where the text goes
                 ObjFS.Write(info, 0, info.Length)
                 ObjFS.Close()
             ElseIf vbNo Then
                 'cancel the save
             End If
         Else
-            Dim ObjFS As FileStream = File.Create(strPathRemuxFile)
+            Dim ObjFS As FileStream = File.Create(strPathFolderFile)
 
             ' Add text to the file.
-            Dim info As Byte() = New UTF8Encoding(True).GetBytes(strMKVMerge) 'here is where the text goes
+            Dim info As Byte() = New UTF8Encoding(True).GetBytes(strCommand) 'here is where the text goes
             ObjFS.Write(info, 0, info.Length)
             ObjFS.Close()
             ClassMyTreeView1.SelectedNode.BackColor = Color.Green
@@ -1028,26 +1135,25 @@ Public Class Form1
         SubtitleRemuxString = strSubtitle
     End Function
 
-    Function CheckRemux(strRemuxFileName)
-        Dim blnRemux
+    Function CheckSettingsFile(strFileName)
+        Dim strPathMode As String
+        Dim strPathModeMovie As String
+        Dim strPathModeFile As String
 
-        blnRemux = rbRemux.Checked
-        If blnRemux Then
-            Dim strPathRemux As String
-            Dim strPathRemuxMovie As String
-            Dim strPathRemuxFile As String
-            strPathRemux = txtInputDirectory.Text & "\Remux"
-            strPathRemuxMovie = strPathRemux & "\" & lbxDirectory.SelectedItem
-            strPathRemuxFile = strPathRemuxMovie & "\" & strRemuxFileName & ".txt"
-
-            If File.Exists(strPathRemuxFile) Then
-                CheckRemux = True
-            Else
-                CheckRemux = False
-            End If
+        If rbRemux.Checked Then
+            strPathMode = txtInputDirectory.Text & "\Remux"
         Else
-            CheckRemux = False
+            strPathMode = txtInputDirectory.Text & "\Transcode"
         End If
+        strPathModeMovie = strPathMode & "\" & lbxDirectory.SelectedItem
+        strPathModeFile = strPathModeMovie & "\" & strFileName & ".txt"
+
+        If File.Exists(strPathModeFile) Then
+            CheckSettingsFile = True
+        Else
+            CheckSettingsFile = False
+        End If
+
     End Function
 
     Private Sub btnOutputDirectory_Click(sender As Object, e As EventArgs) Handles btnOutputDirectory.Click
@@ -1181,4 +1287,15 @@ Public Class Form1
     Private Sub rbCreate_CheckedChanged(sender As Object, e As EventArgs) Handles rbCreate.CheckedChanged
         ValidateButtons(sender.text, sender.checked)
     End Sub
+
+    Private Sub btnTranscode_Click(sender As Object, e As EventArgs) Handles btnTranscode.Click
+        Dim strString
+        If tbxOutputDirectory.Text = "" Then
+            MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
+            Exit Sub
+        End If
+        strString = CreateCommandSettingsString()
+        SaveRemuxFile(strString)
+    End Sub
+
 End Class

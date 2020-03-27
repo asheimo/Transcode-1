@@ -31,10 +31,11 @@ Partial Class RunRemux
         'rtbProgress
         '
         Me.rtbProgress.BackColor = System.Drawing.SystemColors.Desktop
-        Me.rtbProgress.ForeColor = System.Drawing.SystemColors.Window
+        Me.rtbProgress.Font = New System.Drawing.Font("Consolas", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.rtbProgress.ForeColor = System.Drawing.SystemColors.ScrollBar
         Me.rtbProgress.Location = New System.Drawing.Point(226, 13)
         Me.rtbProgress.Name = "rtbProgress"
-        Me.rtbProgress.Size = New System.Drawing.Size(562, 380)
+        Me.rtbProgress.Size = New System.Drawing.Size(800, 380)
         Me.rtbProgress.TabIndex = 1
         Me.rtbProgress.Text = ""
         '
@@ -68,7 +69,7 @@ Partial Class RunRemux
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.ClientSize = New System.Drawing.Size(1033, 438)
         Me.Controls.Add(Me.clbxDirectory)
         Me.Controls.Add(Me.btnClose)
         Me.Controls.Add(Me.btnStart)

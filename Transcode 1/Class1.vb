@@ -34,22 +34,22 @@ Class Centered_MessageBox
 
     Public Sub New(owner As Form)
         mOwner = owner
-        owner.BeginInvoke(New MethodInvoker(AddressOf findDialog))
+        owner.BeginInvoke(New MethodInvoker(AddressOf FindDialog))
     End Sub
 
-    Private Sub findDialog()
+    Private Sub FindDialog()
         ' Enumerate windows to find the message box
         If mTries < 0 Then
             Return
         End If
-        Dim callback As New EnumThreadWndProc(AddressOf checkWindow)
+        Dim callback As New EnumThreadWndProc(AddressOf CheckWindow)
         If EnumThreadWindows(GetCurrentThreadId(), callback, IntPtr.Zero) Then
             If System.Threading.Interlocked.Increment(mTries) < 10 Then
-                mOwner.BeginInvoke(New MethodInvoker(AddressOf findDialog))
+                mOwner.BeginInvoke(New MethodInvoker(AddressOf FindDialog))
             End If
         End If
     End Sub
-    Private Function checkWindow(hWnd As IntPtr, lp As IntPtr) As Boolean
+    Private Function CheckWindow(hWnd As IntPtr, lp As IntPtr) As Boolean
         ' Checks if <hWnd> is a dialog
         Dim sb As New StringBuilder(260)
         GetClassName(hWnd, sb, sb.Capacity)

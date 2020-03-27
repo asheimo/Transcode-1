@@ -71,6 +71,8 @@ Partial Class Form1
         Me.DataGridView4 = New System.Windows.Forms.DataGridView()
         Me.DataGridView5 = New System.Windows.Forms.DataGridView()
         Me.DataGridView6 = New System.Windows.Forms.DataGridView()
+        Me.btnTranscode = New System.Windows.Forms.Button()
+        Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
         Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.DataGridViewTextBoxColumn2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()
@@ -81,8 +83,6 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn6 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.DataGridViewTextBoxColumn9 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
-        Me.btnTranscode = New System.Windows.Forms.Button()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -429,6 +429,7 @@ Partial Class Form1
         Me.DataGridView4.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView4.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.DataGridViewTextBoxColumn1, Me.DataGridViewTextBoxColumn2, Me.Column5, Me.Column21})
+        Me.DataGridView4.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.DataGridView4.Location = New System.Drawing.Point(14, 239)
         Me.DataGridView4.Name = "DataGridView4"
         Me.DataGridView4.Size = New System.Drawing.Size(772, 54)
@@ -443,6 +444,7 @@ Partial Class Form1
         Me.DataGridView5.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView5.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView5.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.DataGridViewTextBoxColumn4, Me.Column20, Me.DataGridViewTextBoxColumn5, Me.DataGridViewTextBoxColumn6})
+        Me.DataGridView5.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.DataGridView5.Location = New System.Drawing.Point(14, 299)
         Me.DataGridView5.Name = "DataGridView5"
         Me.DataGridView5.Size = New System.Drawing.Size(772, 109)
@@ -457,10 +459,27 @@ Partial Class Form1
         Me.DataGridView6.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView6.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridView6.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.DataGridViewTextBoxColumn9, Me.Column22})
+        Me.DataGridView6.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.DataGridView6.Location = New System.Drawing.Point(14, 414)
         Me.DataGridView6.Name = "DataGridView6"
         Me.DataGridView6.Size = New System.Drawing.Size(772, 98)
         Me.DataGridView6.TabIndex = 36
+        '
+        'btnTranscode
+        '
+        Me.btnTranscode.Location = New System.Drawing.Point(14, 518)
+        Me.btnTranscode.Name = "btnTranscode"
+        Me.btnTranscode.Size = New System.Drawing.Size(138, 23)
+        Me.btnTranscode.TabIndex = 37
+        Me.btnTranscode.Text = "Save Transcode Settings"
+        Me.btnTranscode.UseVisualStyleBackColor = True
+        '
+        'ClassMyTreeView1
+        '
+        Me.ClassMyTreeView1.Location = New System.Drawing.Point(403, 88)
+        Me.ClassMyTreeView1.Name = "ClassMyTreeView1"
+        Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
+        Me.ClassMyTreeView1.TabIndex = 27
         '
         'DataGridViewTextBoxColumn1
         '
@@ -468,18 +487,21 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn1.HeaderText = "Track Info"
         Me.DataGridViewTextBoxColumn1.Name = "DataGridViewTextBoxColumn1"
         Me.DataGridViewTextBoxColumn1.ReadOnly = True
+        Me.DataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
         Me.DataGridViewTextBoxColumn1.Width = 378
         '
         'DataGridViewTextBoxColumn2
         '
+        Me.DataGridViewTextBoxColumn2.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
         Me.DataGridViewTextBoxColumn2.FillWeight = 7.614212!
         Me.DataGridViewTextBoxColumn2.HeaderText = "Resolution"
-        Me.DataGridViewTextBoxColumn2.Items.AddRange(New Object() {"480p", "720p", "1080p", "2160p"})
+        Me.DataGridViewTextBoxColumn2.Items.AddRange(New Object() {"Keep", "480p", "720p", "1080p", "2160p"})
         Me.DataGridViewTextBoxColumn2.Name = "DataGridViewTextBoxColumn2"
         Me.DataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
         '
         'Column5
         '
+        Me.Column5.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
         Me.Column5.FillWeight = 7.614212!
         Me.Column5.HeaderText = "Output Format"
         Me.Column5.Items.AddRange(New Object() {"h.264", "hevc"})
@@ -487,6 +509,7 @@ Partial Class Form1
         '
         'Column21
         '
+        Me.Column21.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
         Me.Column21.HeaderText = "Frame Rate"
         Me.Column21.Items.AddRange(New Object() {"Keep", "30000/1001", "24000/1001"})
         Me.Column21.Name = "Column21"
@@ -497,10 +520,12 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn4.FillWeight = 284.7716!
         Me.DataGridViewTextBoxColumn4.HeaderText = "Track Info"
         Me.DataGridViewTextBoxColumn4.Name = "DataGridViewTextBoxColumn4"
+        Me.DataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
         Me.DataGridViewTextBoxColumn4.Width = 378
         '
         'Column20
         '
+        Me.Column20.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
         Me.Column20.HeaderText = "Format"
         Me.Column20.Items.AddRange(New Object() {"Keep", "eac3", "ac3"})
         Me.Column20.Name = "Column20"
@@ -508,6 +533,7 @@ Partial Class Form1
         '
         'DataGridViewTextBoxColumn5
         '
+        Me.DataGridViewTextBoxColumn5.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
         Me.DataGridViewTextBoxColumn5.FillWeight = 7.614212!
         Me.DataGridViewTextBoxColumn5.HeaderText = "Width"
         Me.DataGridViewTextBoxColumn5.Items.AddRange(New Object() {"Keep", "Surround", "Stereo", "Mono"})
@@ -518,6 +544,7 @@ Partial Class Form1
         '
         'DataGridViewTextBoxColumn6
         '
+        Me.DataGridViewTextBoxColumn6.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
         Me.DataGridViewTextBoxColumn6.FillWeight = 7.614212!
         Me.DataGridViewTextBoxColumn6.HeaderText = "Bit Rate (Kbps)"
         Me.DataGridViewTextBoxColumn6.Items.AddRange(New Object() {"Keep", "1536", "768", "640", "320", "192"})
@@ -531,6 +558,7 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn9.FillWeight = 194.9239!
         Me.DataGridViewTextBoxColumn9.HeaderText = "Track Info"
         Me.DataGridViewTextBoxColumn9.Name = "DataGridViewTextBoxColumn9"
+        Me.DataGridViewTextBoxColumn9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
         Me.DataGridViewTextBoxColumn9.Width = 378
         '
         'Column22
@@ -538,22 +566,6 @@ Partial Class Form1
         Me.Column22.FillWeight = 5.076141!
         Me.Column22.HeaderText = "Burn"
         Me.Column22.Name = "Column22"
-        '
-        'ClassMyTreeView1
-        '
-        Me.ClassMyTreeView1.Location = New System.Drawing.Point(403, 88)
-        Me.ClassMyTreeView1.Name = "ClassMyTreeView1"
-        Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
-        Me.ClassMyTreeView1.TabIndex = 27
-        '
-        'btnTranscode
-        '
-        Me.btnTranscode.Location = New System.Drawing.Point(17, 519)
-        Me.btnTranscode.Name = "btnTranscode"
-        Me.btnTranscode.Size = New System.Drawing.Size(138, 23)
-        Me.btnTranscode.TabIndex = 37
-        Me.btnTranscode.Text = "Save Transcode Settings"
-        Me.btnTranscode.UseVisualStyleBackColor = True
         '
         'Form1
         '
@@ -651,6 +663,7 @@ Partial Class Form1
     Friend WithEvents DataGridView4 As DataGridView
     Friend WithEvents DataGridView5 As DataGridView
     Friend WithEvents DataGridView6 As DataGridView
+    Friend WithEvents btnTranscode As Button
     Friend WithEvents DataGridViewTextBoxColumn1 As DataGridViewTextBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn2 As DataGridViewComboBoxColumn
     Friend WithEvents Column5 As DataGridViewComboBoxColumn
@@ -661,5 +674,4 @@ Partial Class Form1
     Friend WithEvents DataGridViewTextBoxColumn6 As DataGridViewComboBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn9 As DataGridViewTextBoxColumn
     Friend WithEvents Column22 As DataGridViewCheckBoxColumn
-    Friend WithEvents btnTranscode As Button
 End Class
