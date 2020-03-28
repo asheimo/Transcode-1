@@ -171,4 +171,10 @@ Public Class RunRemux
         rtbProgress.SelectionStart = rtbProgress.Text.Length
         ScrollToBottom(rtbProgress)
     End Sub
+
+    Private Sub SelectAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SelectAllToolStripMenuItem.Click
+        For i As Integer = 0 To clbxDirectory.Items.Count - 1
+            clbxDirectory.SetItemChecked(i, True)
+        Next
+    End Sub
 End Class

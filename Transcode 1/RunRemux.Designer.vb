@@ -22,10 +22,14 @@ Partial Class RunRemux
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.rtbProgress = New System.Windows.Forms.RichTextBox()
         Me.btnStart = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
         Me.clbxDirectory = New System.Windows.Forms.CheckedListBox()
+        Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.SelectAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ContextMenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'rtbProgress
@@ -59,11 +63,25 @@ Partial Class RunRemux
         '
         'clbxDirectory
         '
+        Me.clbxDirectory.CheckOnClick = True
+        Me.clbxDirectory.ContextMenuStrip = Me.ContextMenuStrip1
         Me.clbxDirectory.FormattingEnabled = True
         Me.clbxDirectory.Location = New System.Drawing.Point(13, 13)
         Me.clbxDirectory.Name = "clbxDirectory"
         Me.clbxDirectory.Size = New System.Drawing.Size(207, 379)
         Me.clbxDirectory.TabIndex = 4
+        '
+        'ContextMenuStrip1
+        '
+        Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectAllToolStripMenuItem})
+        Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
+        Me.ContextMenuStrip1.Size = New System.Drawing.Size(123, 26)
+        '
+        'SelectAllToolStripMenuItem
+        '
+        Me.SelectAllToolStripMenuItem.Name = "SelectAllToolStripMenuItem"
+        Me.SelectAllToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.SelectAllToolStripMenuItem.Text = "Select All"
         '
         'RunRemux
         '
@@ -76,6 +94,7 @@ Partial Class RunRemux
         Me.Controls.Add(Me.rtbProgress)
         Me.Name = "RunRemux"
         Me.Text = "RunRemux"
+        Me.ContextMenuStrip1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -83,4 +102,6 @@ Partial Class RunRemux
     Friend WithEvents btnStart As Button
     Friend WithEvents btnClose As Button
     Friend WithEvents clbxDirectory As CheckedListBox
+    Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
+    Friend WithEvents SelectAllToolStripMenuItem As ToolStripMenuItem
 End Class
