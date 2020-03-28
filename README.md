@@ -13,4 +13,17 @@ they are easier to use and batch friendly at the same time.
 
 ## Installation
 
+The application is portable so really the installation for it is simple. 
+The applications depends on the following:
+  ### For Primary functions
+  ffmpeg
+  ffprobe
+  other-transcode
+  
+  ### For ancillary functions
+  mpv
+  subtitleedit
+
+All of these should be made available through the system Path
+
 ## Usage
