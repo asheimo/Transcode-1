@@ -29,13 +29,14 @@ Partial Class RunRemux
         Me.clbxDirectory = New System.Windows.Forms.CheckedListBox()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.SelectAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.cbxHEVC = New System.Windows.Forms.CheckBox()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'rtbProgress
         '
         Me.rtbProgress.BackColor = System.Drawing.SystemColors.Desktop
-        Me.rtbProgress.Font = New System.Drawing.Font("Consolas", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.rtbProgress.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.rtbProgress.ForeColor = System.Drawing.SystemColors.ScrollBar
         Me.rtbProgress.Location = New System.Drawing.Point(226, 13)
         Me.rtbProgress.Name = "rtbProgress"
@@ -80,14 +81,26 @@ Partial Class RunRemux
         'SelectAllToolStripMenuItem
         '
         Me.SelectAllToolStripMenuItem.Name = "SelectAllToolStripMenuItem"
-        Me.SelectAllToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.SelectAllToolStripMenuItem.Size = New System.Drawing.Size(122, 22)
         Me.SelectAllToolStripMenuItem.Text = "Select All"
+        '
+        'cbxHEVC
+        '
+        Me.cbxHEVC.AutoSize = True
+        Me.cbxHEVC.Location = New System.Drawing.Point(185, 413)
+        Me.cbxHEVC.Name = "cbxHEVC"
+        Me.cbxHEVC.Size = New System.Drawing.Size(173, 17)
+        Me.cbxHEVC.TabIndex = 5
+        Me.cbxHEVC.Text = "Use HEVC For Untagged Items"
+        Me.cbxHEVC.UseVisualStyleBackColor = True
+        Me.cbxHEVC.Visible = False
         '
         'RunRemux
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1033, 438)
+        Me.Controls.Add(Me.cbxHEVC)
         Me.Controls.Add(Me.clbxDirectory)
         Me.Controls.Add(Me.btnClose)
         Me.Controls.Add(Me.btnStart)
@@ -96,6 +109,7 @@ Partial Class RunRemux
         Me.Text = "RunRemux"
         Me.ContextMenuStrip1.ResumeLayout(False)
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents rtbProgress As RichTextBox
@@ -104,4 +118,5 @@ Partial Class RunRemux
     Friend WithEvents clbxDirectory As CheckedListBox
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents SelectAllToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents cbxHEVC As CheckBox
 End Class

@@ -29,6 +29,7 @@ Public Class RunRemux
         Next
         If Form1.rbCreate.Checked Then
             Me.Text = "Run Transcode"
+            cbxHEVC.Visible = True
         End If
     End Sub
 
@@ -41,7 +42,7 @@ Public Class RunRemux
         Dim strOutputFile
 
         If blnCopy Then
-            arrFilePart1 = Split(txt, ",")
+            arrFilePart1 = Split(txt, "|")
             strOutputDirectory = arrFilePart1(1)
         Else
             arrFilePart1 = Split(My.Computer.FileSystem.ReadAllText(txt), "--")
@@ -57,10 +58,14 @@ Public Class RunRemux
         If blnCopy Then
             If Form1.rbRemux.Checked Then
                 strCommand = "Robocopy"
-                strArgs = Replace(Chr(34) & txt, ",", Chr(34) & " " & Chr(34)) & Chr(34) & " /njs /ndl /nc /ns"
+                strArgs = Replace(Chr(34) & txt, "|", Chr(34) & " " & Chr(34)) & Chr(34) & " /is /njs /ndl /nc /ns"
             ElseIf Form1.rbCreate.Checked Then
                 strCommand = "other-transcode"
-                strArgs = " --add-audio eng --add-subtitle eng " & txt
+                If cbxHEVC.Checked Then
+                    strArgs = " --hevc --copy-track-names --add-audio eng --add-subtitle eng " & txt
+                Else
+                    strArgs = " --copy-track-names --add-audio eng --add-subtitle eng " & txt
+                End If
             Else
                 MsgBox("Error, Aborting", vbCritical, "Error")
                 Exit Sub
@@ -146,7 +151,7 @@ Public Class RunRemux
                         RunRemux(strRemuxName, False)
                     Else
                         'if no remux file copy file to output folder
-                        RunRemux(strRootDirectory & objFolder.name & "," & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & "," & Title.name, True)
+                        RunRemux(strRootDirectory & objFolder.name & "|" & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & "|" & Title.name, True)
                     End If
                 Next
             ElseIf Form1.rbCreate.Checked Then

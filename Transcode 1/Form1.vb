@@ -560,6 +560,7 @@ Public Class Form1
                     Dim DGR As Integer = DataGridView5.Rows.Add
                     With DataGridView5
                         .Rows(DGR).Cells(0).Value = strName & " / " & strChannelLayout & " / " & strBitRate & " / " & strTitle & " / " & strLanguage
+                        AddContextMenu()
                     End With
                 End If
             Case "Subtitle"
@@ -990,7 +991,7 @@ Public Class Form1
 
             'Deal with Audio Tracks
             arraylist = New ArrayList()
-            For i = 0 To DataGridView5.Rows.Count - 1
+            For i = DataGridView5.Rows.Count - 1 To 0 Step -1
                 arraylist.Insert(0, DataGridView5.Rows(i))
             Next
             i = 1
@@ -1002,10 +1003,11 @@ Public Class Form1
 
                 If strCodec = "Keep" And strWidth = "Keep" And strBitRate = "Keep" Then strWidth = "original"
                 If i = 1 Then
-                    strAudio = "--main-audio 1=" & strWidth & " "
+                    strAudio = "--main-audio 1=" & LCase(strWidth) & " "
                 Else
-                    strAudio = strAudio & "--add-audio " & i & "=" & strWidth & " "
+                    strAudio = strAudio & "--add-audio " & i & "=" & LCase(strWidth) & " "
                 End If
+                If strCodec = "eac3" Then strAlwaysOptions &= "--eac3 "
                 i += 1
             Next
 
@@ -1031,7 +1033,7 @@ Public Class Form1
             Next
 
             'create the proper file name
-            If strDTS <> 0 Then
+            If strDTS <> 0 And strCodec = "Keep" Then
                 strAlwaysOptions &= "--pass-dts "
             End If
             If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
@@ -1296,6 +1298,33 @@ Public Class Form1
         End If
         strString = CreateCommandSettingsString()
         SaveRemuxFile(strString)
+    End Sub
+
+    Private toolStripItem1 As ToolStripMenuItem = New ToolStripMenuItem()
+
+    Private Sub AddContextMenu()
+        toolStripItem1.Text = "Copy Track"
+        AddHandler toolStripItem1.Click, New EventHandler(AddressOf toolStripItem1_Click)
+        Dim strip As ContextMenuStrip = New ContextMenuStrip()
+
+        For Each row As DataGridViewRow In DataGridView5.Rows
+            row.ContextMenuStrip = strip
+            row.ContextMenuStrip.Items.Add(toolStripItem1)
+        Next
+    End Sub
+
+    Private mouseLocation As DataGridViewCellEventArgs
+
+    Private Sub toolStripItem1_Click(ByVal sender As Object, ByVal args As EventArgs)
+        With DataGridView5.Rows(mouseLocation.RowIndex)
+            .Cells(1).Value = "Keep"
+            .Cells(2).Value = "Keep"
+            .Cells(3).Value = "Keep"
+        End With
+    End Sub
+
+    Private Sub dataGridView5_CellMouseEnter(ByVal sender As Object, ByVal location As DataGridViewCellEventArgs) Handles DataGridView5.CellMouseEnter
+        mouseLocation = location
     End Sub
 
 End Class
