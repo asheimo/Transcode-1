@@ -30,6 +30,10 @@ Partial Class RunRemux
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.SelectAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cbxHEVC = New System.Windows.Forms.CheckBox()
+        Me.pbFolderProgress = New System.Windows.Forms.ProgressBar()
+        Me.lblFolderProgress = New System.Windows.Forms.Label()
+        Me.pbOverallProgress = New System.Windows.Forms.ProgressBar()
+        Me.lblOverallProgress = New System.Windows.Forms.Label()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -95,11 +99,51 @@ Partial Class RunRemux
         Me.cbxHEVC.UseVisualStyleBackColor = True
         Me.cbxHEVC.Visible = False
         '
+        'pbFolderProgress
+        '
+        Me.pbFolderProgress.Location = New System.Drawing.Point(484, 409)
+        Me.pbFolderProgress.Name = "pbFolderProgress"
+        Me.pbFolderProgress.Size = New System.Drawing.Size(100, 23)
+        Me.pbFolderProgress.TabIndex = 6
+        Me.pbFolderProgress.Visible = False
+        '
+        'lblFolderProgress
+        '
+        Me.lblFolderProgress.AutoSize = True
+        Me.lblFolderProgress.Location = New System.Drawing.Point(398, 414)
+        Me.lblFolderProgress.Name = "lblFolderProgress"
+        Me.lblFolderProgress.Size = New System.Drawing.Size(80, 13)
+        Me.lblFolderProgress.TabIndex = 7
+        Me.lblFolderProgress.Text = "Folder Progress"
+        Me.lblFolderProgress.Visible = False
+        '
+        'pbOverallProgress
+        '
+        Me.pbOverallProgress.Location = New System.Drawing.Point(700, 409)
+        Me.pbOverallProgress.Name = "pbOverallProgress"
+        Me.pbOverallProgress.Size = New System.Drawing.Size(100, 23)
+        Me.pbOverallProgress.TabIndex = 8
+        Me.pbOverallProgress.Visible = False
+        '
+        'lblOverallProgress
+        '
+        Me.lblOverallProgress.AutoSize = True
+        Me.lblOverallProgress.Location = New System.Drawing.Point(619, 414)
+        Me.lblOverallProgress.Name = "lblOverallProgress"
+        Me.lblOverallProgress.Size = New System.Drawing.Size(75, 13)
+        Me.lblOverallProgress.TabIndex = 9
+        Me.lblOverallProgress.Text = "Total Progress"
+        Me.lblOverallProgress.Visible = False
+        '
         'RunRemux
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1033, 438)
+        Me.Controls.Add(Me.lblOverallProgress)
+        Me.Controls.Add(Me.pbOverallProgress)
+        Me.Controls.Add(Me.lblFolderProgress)
+        Me.Controls.Add(Me.pbFolderProgress)
         Me.Controls.Add(Me.cbxHEVC)
         Me.Controls.Add(Me.clbxDirectory)
         Me.Controls.Add(Me.btnClose)
@@ -119,4 +163,8 @@ Partial Class RunRemux
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents SelectAllToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents cbxHEVC As CheckBox
+    Friend WithEvents pbFolderProgress As ProgressBar
+    Friend WithEvents lblFolderProgress As Label
+    Friend WithEvents pbOverallProgress As ProgressBar
+    Friend WithEvents lblOverallProgress As Label
 End Class

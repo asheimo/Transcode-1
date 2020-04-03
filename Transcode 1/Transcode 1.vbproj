@@ -125,6 +125,13 @@
     <Compile Include="RunRemux.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Settings.vb" />
+    <Compile Include="UserPreferences.Designer.vb">
+      <DependentUpon>UserPreferences.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UserPreferences.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutBox1.resx">
@@ -141,6 +148,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RunRemux.resx">
       <DependentUpon>RunRemux.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserPreferences.resx">
+      <DependentUpon>UserPreferences.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -151,9 +151,15 @@ Public Class Form1
 
     Private Sub ClassMyTreeView1_BeforeSelect(sender As Object, e As TreeViewCancelEventArgs) Handles ClassMyTreeView1.BeforeSelect
 
-        DataGridView1.Rows.Clear()
-        DataGridView2.Rows.Clear()
-        DataGridView3.Rows.Clear()
+        If rbRemux.Checked Then
+            DataGridView1.Rows.Clear()
+            DataGridView2.Rows.Clear()
+            DataGridView3.Rows.Clear()
+        ElseIf rbCreate.Checked Then
+            DataGridView4.Rows.Clear()
+            DataGridView5.Rows.Clear()
+            DataGridView6.Rows.Clear()
+        End If
 
         If e.Action = TreeViewAction.Unknown Then
             If e.Node Is Nothing Then Exit Sub
@@ -719,7 +725,7 @@ Public Class Form1
             MsgBox("No Title Selected", vbExclamation, "Error")
             Exit Sub
         Else
-            If ClassMyTreeView1.SelectedNode.Parent.Name <> "" Then
+            If ClassMyTreeView1.SelectedNode.Parent IsNot Nothing Then
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & ClassMyTreeView1.SelectedNode.Parent.Name & ".mkv"
             Else
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
@@ -873,6 +879,9 @@ Public Class Form1
             Exit Sub
         End If
         strString = CreateCommandSettingsString()
+        If strString = "Abort" Then
+            Exit Sub
+        End If
         SaveRemuxFile(strString)
 
     End Sub
@@ -901,7 +910,7 @@ Public Class Form1
         End If
         strPathCommandMovie = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
 
-
+        'check for selected audio tracks
         If rbRemux.Checked Then
             'Deal with video tracks
             'Currently there is only one video track per title so there is no need for real processing
@@ -913,13 +922,18 @@ Public Class Form1
             For i = 0 To DataGridView2.SelectedRows.Count - 1
                 arraylist.Insert(0, DataGridView2.SelectedRows(i))
             Next
+            If arraylist.Count = 0 Then
+                Using New Centered_MessageBox(Me)
+                    MsgBox("No audio track selected. Aborting", vbOKOnly, "Error")
+                End Using
+                CreateCommandSettingsString = "Abort"
+                Exit Function
+            End If
             For Each objItem As DataGridViewRow In arraylist 'Audio tracks
                 If objItem.Cells(5).Value = "True" Then
                     strDefaultAudio = "--default-track " & objItem.Cells(6).Value
                 End If
-#Disable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
                 strAudio = AudioRemuxString(strAudio, objItem.Cells(6).Value)
-#Enable Warning BC42104 ' Variable 'strAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
             Next
 
             'check if the audio tracks are in a different order
@@ -973,7 +987,7 @@ Public Class Form1
             Dim strResolution As String
             Dim strOutputFormat As String = ""
             Dim strFrameRate As String
-            Dim strCodec As Object
+            Dim strCodec As Object = ""
             Dim strWidth As Object
             Dim strBitRate As Object
             Dim strDTS As Integer
@@ -1327,4 +1341,8 @@ Public Class Form1
         mouseLocation = location
     End Sub
 
+    Private Sub PreferencesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PreferencesToolStripMenuItem.Click
+        Dim box = New UserPreferences()
+        box.ShowDialog()
+    End Sub
 End Class

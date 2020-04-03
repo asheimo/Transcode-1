@@ -83,6 +83,7 @@ Partial Class Form1
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.btnTranscode = New System.Windows.Forms.Button()
         Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
+        Me.PreferencesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -205,7 +206,7 @@ Partial Class Form1
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RunRemuxToolStripMenuItem, Me.ExitToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RunRemuxToolStripMenuItem, Me.PreferencesToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
@@ -213,13 +214,13 @@ Partial Class Form1
         'RunRemuxToolStripMenuItem
         '
         Me.RunRemuxToolStripMenuItem.Name = "RunRemuxToolStripMenuItem"
-        Me.RunRemuxToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.RunRemuxToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.RunRemuxToolStripMenuItem.Text = "Run Remux"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'AboutToolStripMenuItem
@@ -567,6 +568,12 @@ Partial Class Form1
         Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
         Me.ClassMyTreeView1.TabIndex = 27
         '
+        'PreferencesToolStripMenuItem
+        '
+        Me.PreferencesToolStripMenuItem.Name = "PreferencesToolStripMenuItem"
+        Me.PreferencesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.PreferencesToolStripMenuItem.Text = "Preferences"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -674,4 +681,5 @@ Partial Class Form1
     Friend WithEvents DataGridViewTextBoxColumn6 As DataGridViewComboBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn9 As DataGridViewTextBoxColumn
     Friend WithEvents Column22 As DataGridViewCheckBoxColumn
+    Friend WithEvents PreferencesToolStripMenuItem As ToolStripMenuItem
 End Class

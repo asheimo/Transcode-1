@@ -22,7 +22,7 @@ Public Class RunRemux
         Dim objFSO As Object
         objFSO = CreateObject("Scripting.FileSystemObject")
         For Each objFolder In objFSO.GetFolder(Form1.txtInputDirectory.Text).SubFolders
-            If objFolder.name = "Remux" Or objFolder.name = "Transcode Settings" Then
+            If objFolder.name = "Remux" Or objFolder.name = "Transcode" Then
             Else
                 clbxDirectory.Items.Add(objFolder.Name)
             End If
@@ -30,24 +30,32 @@ Public Class RunRemux
         If Form1.rbCreate.Checked Then
             Me.Text = "Run Transcode"
             cbxHEVC.Visible = True
+            btnStart.Text = "Transcode"
         End If
     End Sub
 
-    Private Sub RunRemux(txt, blnCopy)
+    Private Function RunRemux(txt, blnCopy)
         Dim strOutputDirectory
         Dim arrFilePart1()
         Dim strCommand
         Dim strArgs
         Dim oProcess As New Process()
         Dim strOutputFile
+        Dim strPath
 
         If blnCopy Then
             arrFilePart1 = Split(txt, "|")
             strOutputDirectory = arrFilePart1(1)
         Else
-            arrFilePart1 = Split(My.Computer.FileSystem.ReadAllText(txt), "--")
-            strOutputFile = Mid(Replace(arrFilePart1(1), Chr(34), ""), InStr(Replace(arrFilePart1(1), Chr(34), ""), " ") + 1)
-            strOutputDirectory = Strings.Left(strOutputFile, InStrRev(strOutputFile, "\") - 1)
+            If Form1.rbRemux.Checked Then
+                arrFilePart1 = Split(My.Computer.FileSystem.ReadAllText(txt), "--")
+                strOutputFile = Mid(Replace(arrFilePart1(1), Chr(34), ""), InStr(Replace(arrFilePart1(1), Chr(34), ""), " ") + 1)
+                strOutputDirectory = Strings.Left(strOutputFile, InStrRev(strOutputFile, "\") - 1)
+            Else
+                strOutputFile = Split(My.Computer.FileSystem.ReadAllText(txt), Chr(34))(1)
+                'strOutputDirectory = Strings.Left(strOutputFile, InStrRev(strOutputFile, "\") - 1)
+                strOutputDirectory = Form1.tbxOutputDirectory.Text & "\" & Split(My.Computer.FileSystem.ReadAllText(txt), "\")(2)
+            End If
         End If
         'check for movie folder and create if needed
         If Not Directory.Exists(strOutputDirectory) Then
@@ -60,37 +68,47 @@ Public Class RunRemux
                 strCommand = "Robocopy"
                 strArgs = Replace(Chr(34) & txt, "|", Chr(34) & " " & Chr(34)) & Chr(34) & " /is /njs /ndl /nc /ns"
             ElseIf Form1.rbCreate.Checked Then
-                strCommand = "other-transcode"
+                strCommand = "ruby"
+                strPath = Replace(arrFilePart1(0), Chr(34), "") & "\" & Replace(arrFilePart1(2), Chr(34), "")
                 If cbxHEVC.Checked Then
-                    strArgs = " --hevc --copy-track-names --add-audio eng --add-subtitle eng " & txt
+                    strArgs = "C:\Ruby26-x64\bin\other-transcode --hevc --copy-track-names --add-audio eng --add-subtitle eng " & Chr(34) & strPath & Chr(34)
                 Else
-                    strArgs = " --copy-track-names --add-audio eng --add-subtitle eng " & txt
+                    strArgs = "C:\Ruby26-x64\bin\other-transcode --copy-track-names --add-audio eng --add-subtitle eng " & Chr(34) & strPath & Chr(34)
                 End If
             Else
                 MsgBox("Error, Aborting", vbCritical, "Error")
-                Exit Sub
+                Exit Function
             End If
         Else
-            strCommand = Trim(Split(My.Computer.FileSystem.ReadAllText(txt), "--")(0))
-            strArgs = Mid(My.Computer.FileSystem.ReadAllText(txt), Len(strCommand) + 1)
+            If Form1.rbRemux.Checked Then
+                strCommand = Trim(Split(My.Computer.FileSystem.ReadAllText(txt), "--")(0))
+                strArgs = Mid(My.Computer.FileSystem.ReadAllText(txt), Len(strCommand) + 1)
+            ElseIf Form1.rbCreate.Checked Then
+                strCommand = "ruby"
+                strArgs = "C:\Ruby26-x64\bin\" & My.Computer.FileSystem.ReadAllText(txt)
+            End If
         End If
 
         Dim oStartInfo As New ProcessStartInfo(strCommand, strArgs)
+        'Dim oStartInfo As New ProcessStartInfo("ruby", "other-transcode --version")
         If Form1.rbCreate.Checked Then
-            oStartInfo.WorkingDirectory = Form1.tbxOutputDirectory.Text & "" 'need to add movie folder here
+            oStartInfo.WorkingDirectory = strOutputDirectory & "\"
         End If
         oStartInfo.CreateNoWindow = True
         oStartInfo.UseShellExecute = False
         oStartInfo.RedirectStandardOutput = True
+        oStartInfo.RedirectStandardError = True
         oProcess.StartInfo = oStartInfo
         AddHandler oProcess.OutputDataReceived, AddressOf StreamView
+        AddHandler oProcess.ErrorDataReceived, AddressOf StreamView
         oProcess.Start()
         oProcess.BeginOutputReadLine()
+        oProcess.BeginErrorReadLine()
         While Not oProcess.HasExited
             Application.DoEvents()
         End While
 
-    End Sub
+    End Function
 
     Sub StreamView(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
         UpdateTextBox(e.Data)
@@ -107,6 +125,10 @@ Public Class RunRemux
                 rtbProgress.Text &= "Job Complete" & vbCrLf
             ElseIf Tex Is Nothing Then
                 rtbProgress.Text &= Tex & vbCrLf
+            ElseIf Strings.Left(Tex, 6) = "frame=" Then
+                Dim lines As String() = rtbProgress.Lines
+                lines(rtbProgress.Lines.Count - 1) = Tex
+                rtbProgress.Lines = lines
             ElseIf Strings.Left(Tex, 9) = "Progress:" Then
                 Dim lines As String() = rtbProgress.Lines
                 lines(rtbProgress.Lines.Count - 1) = Tex
@@ -132,16 +154,35 @@ Public Class RunRemux
         Dim strRootDirectory
 
         rtbProgress.ResetText()
+        lblFolderProgress.Visible = True
+        lblOverallProgress.Visible = True
+        With pbFolderProgress
+            .Visible = True
+            .Minimum = 1
+            .Value = 1
+            .Step = 1
+        End With
+
+        With pbOverallProgress
+            .Visible = True
+            .Minimum = 1
+            .Value = 1
+            .Step = 1
+        End With
 
         objFSO = CreateObject("Scripting.FileSystemObject")
         strRootDirectory = Form1.txtInputDirectory.Text & "\"
         If clbxDirectory.CheckedItems.Count = 0 Then
             MsgBox("No items chosen", vbExclamation, "Error")
             Exit Sub
+        Else
+            pbOverallProgress.Maximum = clbxDirectory.CheckedItems.Count
         End If
         For Each item In clbxDirectory.CheckedItems
             objFolder = objFSO.GetFolder(strRootDirectory & item)
             objFiles = objFolder.Files
+            pbFolderProgress.Maximum = objFiles.count
+            pbFolderProgress.Value = 1
             If Form1.rbRemux.Checked Then
                 For Each Title In objFiles
                     'check for remux file
@@ -152,6 +193,8 @@ Public Class RunRemux
                     Else
                         'if no remux file copy file to output folder
                         RunRemux(strRootDirectory & objFolder.name & "|" & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & "|" & Title.name, True)
+                        pbFolderProgress.PerformStep()
+
                     End If
                 Next
             ElseIf Form1.rbCreate.Checked Then
@@ -163,13 +206,19 @@ Public Class RunRemux
                         RunRemux(strRemuxName, False)
                     Else
                         'if no transcode file run with default settings
-                        RunRemux(Chr(34) & strRootDirectory & "\" & objFolder.name & Chr(34) & " " & Chr(34) & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & Chr(34) & " " & Chr(34) & Title.name & Chr(34), True)
+                        RunRemux(Chr(34) & strRootDirectory & objFolder.name & "|" & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & "|" & Title.name & Chr(34), True)
                     End If
+                    pbFolderProgress.PerformStep()
                 Next
 
             End If
+            pbOverallProgress.PerformStep()
         Next
         UpdateTextBox("Complete")
+        lblFolderProgress.Visible = False
+        lblOverallProgress.Visible = False
+        pbFolderProgress.Visible = False
+        pbOverallProgress.Visible = False
     End Sub
 
     Private Sub rtbProgress_TextChanged(sender As Object, e As EventArgs) Handles rtbProgress.TextChanged
@@ -182,4 +231,5 @@ Public Class RunRemux
             clbxDirectory.SetItemChecked(i, True)
         Next
     End Sub
+
 End Class
