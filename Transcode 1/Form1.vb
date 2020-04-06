@@ -4,7 +4,26 @@ Public Class Form1
     Private fromIndex As Integer
     Private dragIndex As Integer
     Private dragRect As Rectangle
-    Private Sub btnDirectory_Click(sender As Object, e As EventArgs) Handles btnInputDirectory.Click
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
+        rbRemux.Checked = True
+        ValidateButtons("Load", True)
+        If My.Settings.MPV_Path = "" Or
+        My.Settings.SubtitleEdit_Path = "" Or
+        My.Settings.ffmpeg_Path = "" Or
+        My.Settings.ffprobe_Path = "" Or
+        My.Settings.othertranscode_Path = "" Or
+        My.Settings.MKVPropEdit_Path = "" Or
+        My.Settings.MKVMerge_Path = "" Or
+        My.Settings.Ruby_Path = "" Then
+            Using New Centered_MessageBox(Me)
+                MsgBox("Please Set Paths", vbCritical, "Application Paths Missing")
+            End Using
+            Dim box = New UserPreferences()
+            box.ShowDialog()
+        End If
+    End Sub
+    Private Sub BtnDirectory_Click(sender As Object, e As EventArgs) Handles btnInputDirectory.Click
 
         Dim objFSO As Object
 
@@ -21,6 +40,7 @@ Public Class Form1
 
         For Each objFolder In objFSO.GetFolder(txtInputDirectory.Text).SubFolders
             If objFolder.name = "Remux" Or objFolder.name = "Transcode" Then
+                'don't load these folders in the selection view because they are just settings files
             Else
                 lbxDirectory.Items.Add(objFolder.Name)
             End If
@@ -28,7 +48,7 @@ Public Class Form1
 
     End Sub
 
-    Private Sub lbxDirectory_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbxDirectory.SelectedIndexChanged
+    Private Sub LbxDirectory_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbxDirectory.SelectedIndexChanged
 
         Dim objFSO
         Dim objFolder
@@ -43,12 +63,8 @@ Public Class Form1
         ClassMyTreeView1.Nodes.Clear()
         CleanUp()
 
-        ' Create a FileSystemObject  
         objFSO = CreateObject("Scripting.FileSystemObject")
-
-        ' Define folder we want to list files from
         strPath = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
-
         objFolder = objFSO.GetFolder(strPath)
         objFiles = objFolder.Files
 
@@ -259,7 +275,6 @@ Public Class Form1
                 Next
             ElseIf Strings.Left(LCase(arrSetting), 11) = "track-order" Then
                 arrTracks = Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", "")
-                'Dim output(DataGridView2.Columns.Count * If(DataGridView2.NewRowIndex <> -1, DataGridView2.Rows.Count - 1, DataGridView2.Rows.Count) - 1) As String
                 Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
                 Dim i As Integer = 0
                 For Each row As DataGridViewRow In DataGridView2.Rows
@@ -296,7 +311,7 @@ Public Class Form1
 
     Function GetStreamCount(strText)
         Dim oProcess As New Process()
-        Dim oStartInfo As New ProcessStartInfo("FFProbe", " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & strText & Chr(34)) With {
+        Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & strText & Chr(34)) With {
             .CreateNoWindow = True,
             .UseShellExecute = False,
             .RedirectStandardOutput = True
@@ -308,9 +323,7 @@ Public Class Form1
                 GetStreamCount = oStreamReader.ReadToEnd()
             Loop
         End Using
-#Disable Warning BC42105 ' Function 'GetStreamCount' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
     End Function
-#Enable Warning BC42105 ' Function 'GetStreamCount' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
 
     Function RepopulateInfo(ByRef Arr(), ByRef strType, strTrack)
         Dim i
@@ -353,15 +366,9 @@ Public Class Form1
                 Next
                 Dim DGR As Integer = DataGridView1.Rows.Add
                 With DataGridView1
-#Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(0).Value = strName
-#Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(1).Value = strHeight & "p"
-#Enable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strFPS
-#Enable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(3).Value = blnDefault
                 End With
 
@@ -376,18 +383,10 @@ Public Class Form1
                 Dim DGR As Integer = DataGridView2.Rows.Add
                 With DataGridView2
                     .Rows(DGR).Cells(0).Value = strName
-#Disable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(1).Value = strChannelLayout
-#Enable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strBitRate
-#Enable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(3).Value = strLanguage
-#Enable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(4).Value = strTitle
-#Enable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(5).Value = blnDefault
                     .Rows(DGR).Cells(6).Value = strTrack
                 End With
@@ -421,15 +420,9 @@ Public Class Form1
                 Dim DGR As Integer = DataGridView3.Rows.Add
                 With DataGridView3
                     .Rows(DGR).Cells(0).Value = strName
-#Disable Warning BC42104 ' Variable is used before it has been assigned a value
                     .Rows(DGR).Cells(1).Value = strLanguage
-#Enable Warning BC42104 ' Variable is used before it has been assigned a value
-#Disable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
                     .Rows(DGR).Cells(2).Value = strNumberOfFrames
-#Enable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable is used before it has been assigned a value
                     .Rows(DGR).Cells(3).Value = strTitle
-#Enable Warning BC42104 ' Variable is used before it has been assigned a value
                     .Rows(DGR).Cells(4).Value = blnDefault
                     .Rows(DGR).Cells(5).Value = blnForced
                     .Rows(DGR).Cells(6).Value = strTrack
@@ -442,9 +435,7 @@ Public Class Form1
             Dim z = 0
         End If
 
-#Disable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
     End Function
-#Enable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
 
     Function FormatInfo(ByRef Arr(), ByRef strType, strTrack, strMode)
         Dim i
@@ -488,15 +479,9 @@ Public Class Form1
                 If strMode = "Remux" Then
                     Dim DGR As Integer = DataGridView1.Rows.Add
                     With DataGridView1
-#Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(0).Value = strName
-#Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(1).Value = strHeight & "p"
-#Enable Warning BC42104 ' Variable 'strHeight' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(2).Value = strFPS
-#Enable Warning BC42104 ' Variable 'strFPS' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(3).Value = blnDefault
                     End With
                 ElseIf strMode = "Create" Then
@@ -504,9 +489,7 @@ Public Class Form1
                     With DataGridView4
                         .Columns(1).ToolTipText = "Changing Resolution Not Currently Supported"
                         .Columns(3).ToolTipText = "Changing Frame Rate Not Currently Supported"
-#Disable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(0).Value = strName & " / " & strHeight & "p" & " / " & strFPS
-#Enable Warning BC42104 ' Variable 'strName' is used before it has been assigned a value. A null reference exception could result at runtime.
                     End With
                 End If
             Case "Audio"
@@ -547,18 +530,10 @@ Public Class Form1
                     Dim DGR As Integer = DataGridView2.Rows.Add
                     With DataGridView2
                         .Rows(DGR).Cells(0).Value = strName
-#Disable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(1).Value = strChannelLayout
-#Enable Warning BC42104 ' Variable 'strChannelLayout' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(2).Value = strBitRate
-#Enable Warning BC42104 ' Variable 'strBitRate' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(3).Value = strLanguage
-#Enable Warning BC42104 ' Variable 'strLanguage' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(4).Value = strTitle
-#Enable Warning BC42104 ' Variable 'strTitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(5).Value = blnDefault
                         .Rows(DGR).Cells(6).Value = strTrack
                     End With
@@ -600,9 +575,7 @@ Public Class Form1
                     With DataGridView3
                         .Rows(DGR).Cells(0).Value = strName
                         .Rows(DGR).Cells(1).Value = strLanguage
-#Disable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(2).Value = strNumberOfFrames
-#Enable Warning BC42104 ' Variable 'strNumberOfFrames' is used before it has been assigned a value. A null reference exception could result at runtime.
                         .Rows(DGR).Cells(3).Value = strTitle
                         .Rows(DGR).Cells(4).Value = blnDefault
                         .Rows(DGR).Cells(5).Value = blnForced
@@ -621,9 +594,7 @@ Public Class Form1
             Dim z = 0
         End If
 
-#Disable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
     End Function
-#Enable Warning BC42105 ' Function 'FormatInfo' doesn't return a value on all code paths. A null reference exception could occur at run time when the result is used.
 
     Function SplitArray(ByRef Arr())
         Dim i
@@ -653,7 +624,7 @@ Public Class Form1
         Dim oProcess As New Process()
         Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & txt
         intCount = GetStreamCount(strText)
-        Dim oStartInfo As New ProcessStartInfo("FFProbe", " -loglevel quiet -show_streams -print_format csv=nokey=0 " & Chr(34) & strText & Chr(34)) With {
+        Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -loglevel quiet -show_streams -print_format csv=nokey=0 " & Chr(34) & strText & Chr(34)) With {
             .CreateNoWindow = True,
             .UseShellExecute = False,
             .RedirectStandardOutput = True
@@ -696,22 +667,26 @@ Public Class Form1
         DataGridView6.Rows.Clear()
     End Sub
 
-    Private Sub btnMPV_Click(sender As Object, e As EventArgs) Handles btnMPV.Click
+    Private Sub BtnMPV_Click(sender As Object, e As EventArgs) Handles btnMPV.Click
         Dim strText As String
         If ClassMyTreeView1.GetNodeCount(False) = 0 Then
-            MsgBox("No Title Selected", vbExclamation, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Title Selected", vbExclamation, "Error")
+            End Using
             Exit Sub
         ElseIf ClassMyTreeView1.SelectedNode Is Nothing Then
-            MsgBox("No Title Selected", vbExclamation, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Title Selected", vbExclamation, "Error")
+            End Using
             Exit Sub
         Else
-            If ClassMyTreeView1.SelectedNode.Parent.Name <> "" Then
+            If Not ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & "-" & ClassMyTreeView1.SelectedNode.Parent.Name & ".mkv"
             Else
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             End If
             Dim oProcess As New Process()
-            Dim oStartInfo As New ProcessStartInfo("mpv", " -- " & Chr(34) & strText & Chr(34)) With {
+            Dim oStartInfo As New ProcessStartInfo(My.Settings.MPV_Path, " -- " & Chr(34) & strText & Chr(34)) With {
                 .UseShellExecute = True
             }
             oProcess.StartInfo = oStartInfo
@@ -719,10 +694,12 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub btnSubtitleEdit_Click(sender As Object, e As EventArgs) Handles btnSubtitleEdit.Click
+    Private Sub BtnSubtitleEdit_Click(sender As Object, e As EventArgs) Handles btnSubtitleEdit.Click
         Dim strText
         If ClassMyTreeView1.GetNodeCount(False) = 0 Then
-            MsgBox("No Title Selected", vbExclamation, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Title Selected", vbExclamation, "Error")
+            End Using
             Exit Sub
         Else
             If ClassMyTreeView1.SelectedNode.Parent IsNot Nothing Then
@@ -731,7 +708,7 @@ Public Class Form1
                 strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & ClassMyTreeView1.SelectedNode.Text & ".mkv"
             End If
             Dim oProcess As New Process()
-            Dim oStartInfo As New ProcessStartInfo("C:\bin\Subtitle Edit\SubtitleEdit", Chr(34) & strText & Chr(34)) With {
+            Dim oStartInfo As New ProcessStartInfo(My.Settings.SubtitleEdit_Path, Chr(34) & strText & Chr(34)) With {
                 .UseShellExecute = True
             }
             oProcess.StartInfo = oStartInfo
@@ -739,12 +716,7 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
-        rbRemux.Checked = True
-        ValidateButtons("Load", True)
-    End Sub
-
-    Private Sub rbRemux_CheckedChanged(sender As Object, e As EventArgs) Handles rbRemux.CheckedChanged
+    Private Sub RbRemux_CheckedChanged(sender As Object, e As EventArgs) Handles rbRemux.CheckedChanged
         ValidateButtons(sender.text, sender.checked)
     End Sub
     Private Sub ValidateButtons(strSource As String, State As Boolean)
@@ -872,10 +844,12 @@ Public Class Form1
 
     End Sub
 
-    Private Sub btnSaveRemux_Click(sender As Object, e As EventArgs) Handles btnSaveRemux.Click
+    Private Sub BtnSaveRemux_Click(sender As Object, e As EventArgs) Handles btnSaveRemux.Click
         Dim strString
         If tbxOutputDirectory.Text = "" Then
-            MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
+            End Using
             Exit Sub
         End If
         strString = CreateCommandSettingsString()
@@ -887,7 +861,6 @@ Public Class Form1
     End Sub
 
     Private Function CreateCommandSettingsString()
-        Dim strAlwaysOptions
         Dim strDefaultVideo
         Dim strDefaultAudio
         Dim strDefaultSubtitle
@@ -903,10 +876,8 @@ Public Class Form1
         'set paths
         If rbRemux.Checked Then
             strPathCommand = txtInputDirectory.Text & "\Remux"
-            strAlwaysOptions = " --no-buttons --no-attachments "
         Else
             strPathCommand = txtInputDirectory.Text & "\Transcode"
-            strAlwaysOptions = "--copy-track-names "
         End If
         strPathCommandMovie = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
 
@@ -938,7 +909,7 @@ Public Class Form1
 
             'check if the audio tracks are in a different order
             strTrackOrder = Replace(Split(strAudio, " ")(1), ",", "")
-            If Not isAlphabaticOrder(strTrackOrder) Then
+            If Not IsAlphabaticOrder(strTrackOrder) Then
                 arrTrackOrder = Split(Split(strAudio, " ")(1), ",")
                 strTrackOrder = "--track-order 0:0,"
                 For i = 0 To UBound(arrTrackOrder)
@@ -955,9 +926,7 @@ Public Class Form1
                 If objItem.Cells(4).Value = True Then
                     strDefaultSubtitle = "--default-track " & objItem.Cells(6).Value
                 End If
-#Disable Warning BC42104 ' Variable 'strSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
                 strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
-#Enable Warning BC42104 ' Variable 'strSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
             Next
 
             'create the proper file name
@@ -968,17 +937,13 @@ Public Class Form1
             End If
 
             If strTrackOrder <> "" Then
-#Disable Warning BC42104 ' Variable 'strDefaultSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Disable Warning BC42104 ' Variable 'strDefaultAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
-                CreateCommandSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strAlwaysOptions & " " _
+                CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & My.Settings.MKVMerge_options & " " _
                 & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
-#Enable Warning BC42104 ' Variable 'strDefaultAudio' is used before it has been assigned a value. A null reference exception could result at runtime.
-#Enable Warning BC42104 ' Variable 'strDefaultSubtitle' is used before it has been assigned a value. A null reference exception could result at runtime.
 
             Else
-                CreateCommandSettingsString = "mkvmerge --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strAlwaysOptions & " " _
+                CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & My.Settings.MKVMerge_options & " " _
                 & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
             End If
 
@@ -1021,7 +986,7 @@ Public Class Form1
                 Else
                     strAudio = strAudio & "--add-audio " & i & "=" & LCase(strWidth) & " "
                 End If
-                If strCodec = "eac3" Then strAlwaysOptions &= "--eac3 "
+                If strCodec = "eac3" Then My.Settings.othertranscode_Options &= "--eac3 "
                 i += 1
             Next
 
@@ -1048,7 +1013,7 @@ Public Class Form1
 
             'create the proper file name
             If strDTS <> 0 And strCodec = "Keep" Then
-                strAlwaysOptions &= "--pass-dts "
+                My.Settings.othertranscode_Options &= "--pass-dts "
             End If
             If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
                 strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
@@ -1056,7 +1021,7 @@ Public Class Form1
                 strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
             End If
 
-            CreateCommandSettingsString = "other-transcode " & strAlwaysOptions & If(strOutputFormat, "") & strAudio & strSubtitle _
+            CreateCommandSettingsString = My.Settings.othertranscode_Path & " " & My.Settings.othertranscode_Options & If(strOutputFormat, "") & strAudio & strSubtitle _
                   & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
         Else
             CreateCommandSettingsString = "Error"
@@ -1086,7 +1051,9 @@ Public Class Form1
             strPathFolder = txtInputDirectory.Text & "\Transcode"
             strProcess = "Transcode"
         Else
-            MsgBox("Error, Aborting Save", vbCritical, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("Error, Aborting Save", vbCritical, "Error")
+            End Using
             Exit Sub
         End If
 
@@ -1109,7 +1076,9 @@ Public Class Form1
 
         'check for existing settings and ask to overwrite if needed
         If File.Exists(strPathFolderFile) Then
-            lResult = MsgBox(strProcess & " Settings Already Exist. Overwrite", vbYesNo, strProcess & " Settings")
+            Using New Centered_MessageBox(Me)
+                lResult = MsgBox(strProcess & " Settings Already Exist. Overwrite", vbYesNo, strProcess & " Settings")
+            End Using
             If lResult = vbYes Then
                 'create file and save settings
                 Dim ObjFS As FileStream = File.Create(strPathFolderFile)
@@ -1172,7 +1141,7 @@ Public Class Form1
 
     End Function
 
-    Private Sub btnOutputDirectory_Click(sender As Object, e As EventArgs) Handles btnOutputDirectory.Click
+    Private Sub BtnOutputDirectory_Click(sender As Object, e As EventArgs) Handles btnOutputDirectory.Click
         Dim objFSO As Object
 
         objFSO = CreateObject("Scripting.FileSystemObject")
@@ -1185,11 +1154,13 @@ Public Class Form1
 
     End Sub
 
+    '---------------------Drag and Drop for DataGridView------------------------
     Private Sub DataGridView2_DragDrop(ByVal sender As Object, ByVal e As DragEventArgs) Handles DataGridView2.DragDrop
         Dim p As Point = DataGridView2.PointToClient(New Point(e.X, e.Y))
         dragIndex = DataGridView2.HitTest(p.X, p.Y).RowIndex
         If (e.Effect = DragDropEffects.Move) Then
             Dim dragRow As DataGridViewRow = e.Data.GetData(GetType(DataGridViewRow))
+            If dragIndex < 0 Then Exit Sub
             DataGridView2.Rows.RemoveAt(fromIndex)
             DataGridView2.Rows.Insert(dragIndex, dragRow)
         End If
@@ -1264,18 +1235,22 @@ Public Class Form1
             End If
         End If
     End Sub
-
+    '---------------------End Drag and Drop for DataGridView--------------------
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Process.Start(Chr(34) & txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & Chr(34))
     End Sub
 
     Private Sub RunRemuxToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RunRemuxToolStripMenuItem.Click
         If txtInputDirectory.Text = "" Then
-            MsgBox("No Input Directory Chosen", vbExclamation, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Input Directory Chosen", vbExclamation, "Error")
+            End Using
             Exit Sub
         End If
         If tbxOutputDirectory.Text = "" Then
-            MsgBox("No Output Directory Chosen", vbExclamation, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Output Directory Chosen", vbExclamation, "Error")
+            End Using
             Exit Sub
         End If
 
@@ -1283,7 +1258,7 @@ Public Class Form1
         box.ShowDialog()
     End Sub
 
-    Private Shared Function isAlphabaticOrder(ByVal s As String) As Boolean
+    Private Shared Function IsAlphabaticOrder(ByVal s As String) As Boolean
         Dim n As Integer = s.Length
         Dim c As Char() = New Char(n - 1) {}
 
@@ -1300,14 +1275,16 @@ Public Class Form1
         Return True
     End Function
 
-    Private Sub rbCreate_CheckedChanged(sender As Object, e As EventArgs) Handles rbCreate.CheckedChanged
+    Private Sub RbCreate_CheckedChanged(sender As Object, e As EventArgs) Handles rbCreate.CheckedChanged
         ValidateButtons(sender.text, sender.checked)
     End Sub
 
-    Private Sub btnTranscode_Click(sender As Object, e As EventArgs) Handles btnTranscode.Click
+    Private Sub BtnTranscode_Click(sender As Object, e As EventArgs) Handles btnTranscode.Click
         Dim strString
         If tbxOutputDirectory.Text = "" Then
-            MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
+            Using New Centered_MessageBox(Me)
+                MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
+            End Using
             Exit Sub
         End If
         strString = CreateCommandSettingsString()
@@ -1318,7 +1295,7 @@ Public Class Form1
 
     Private Sub AddContextMenu()
         toolStripItem1.Text = "Copy Track"
-        AddHandler toolStripItem1.Click, New EventHandler(AddressOf toolStripItem1_Click)
+        AddHandler toolStripItem1.Click, New EventHandler(AddressOf ToolStripItem1_Click)
         Dim strip As ContextMenuStrip = New ContextMenuStrip()
 
         For Each row As DataGridViewRow In DataGridView5.Rows
@@ -1329,7 +1306,7 @@ Public Class Form1
 
     Private mouseLocation As DataGridViewCellEventArgs
 
-    Private Sub toolStripItem1_Click(ByVal sender As Object, ByVal args As EventArgs)
+    Private Sub ToolStripItem1_Click(ByVal sender As Object, ByVal args As EventArgs)
         With DataGridView5.Rows(mouseLocation.RowIndex)
             .Cells(1).Value = "Keep"
             .Cells(2).Value = "Keep"
@@ -1337,7 +1314,7 @@ Public Class Form1
         End With
     End Sub
 
-    Private Sub dataGridView5_CellMouseEnter(ByVal sender As Object, ByVal location As DataGridViewCellEventArgs) Handles DataGridView5.CellMouseEnter
+    Private Sub DataGridView5_CellMouseEnter(ByVal sender As Object, ByVal location As DataGridViewCellEventArgs) Handles DataGridView5.CellMouseEnter
         mouseLocation = location
     End Sub
 

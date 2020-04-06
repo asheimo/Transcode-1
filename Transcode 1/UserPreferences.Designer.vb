@@ -26,6 +26,10 @@ Partial Class UserPreferences
         Me.btnCancel = New System.Windows.Forms.Button()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.btnWhereRuby = New System.Windows.Forms.Button()
+        Me.btnRuby = New System.Windows.Forms.Button()
+        Me.tbxPathRuby = New System.Windows.Forms.TextBox()
+        Me.Label13 = New System.Windows.Forms.Label()
         Me.btnWhereMKVMerge = New System.Windows.Forms.Button()
         Me.btnMKVMerge = New System.Windows.Forms.Button()
         Me.tbxPathMKVMerge = New System.Windows.Forms.TextBox()
@@ -55,6 +59,12 @@ Partial Class UserPreferences
         Me.tbxPathMPV = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.tbxothertranscodeoptions = New System.Windows.Forms.TextBox()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.tbxMKVMergeOptions = New System.Windows.Forms.TextBox()
+        Me.Label11 = New System.Windows.Forms.Label()
+        Me.tbxRobocopyDefaults = New System.Windows.Forms.TextBox()
+        Me.Label10 = New System.Windows.Forms.Label()
         Me.tbxOtherTranscodeDefaults = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.tbxMKVMergeDefaults = New System.Windows.Forms.TextBox()
@@ -71,7 +81,7 @@ Partial Class UserPreferences
         Me.btnOK.Name = "btnOK"
         Me.btnOK.Size = New System.Drawing.Size(75, 23)
         Me.btnOK.TabIndex = 1
-        Me.btnOK.Text = "OK"
+        Me.btnOK.Text = "Save"
         Me.btnOK.UseVisualStyleBackColor = True
         '
         'btnCancel
@@ -95,6 +105,10 @@ Partial Class UserPreferences
         '
         'TabPage1
         '
+        Me.TabPage1.Controls.Add(Me.btnWhereRuby)
+        Me.TabPage1.Controls.Add(Me.btnRuby)
+        Me.TabPage1.Controls.Add(Me.tbxPathRuby)
+        Me.TabPage1.Controls.Add(Me.Label13)
         Me.TabPage1.Controls.Add(Me.btnWhereMKVMerge)
         Me.TabPage1.Controls.Add(Me.btnMKVMerge)
         Me.TabPage1.Controls.Add(Me.tbxPathMKVMerge)
@@ -130,6 +144,42 @@ Partial Class UserPreferences
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "Paths"
         Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'btnWhereRuby
+        '
+        Me.btnWhereRuby.Location = New System.Drawing.Point(632, 198)
+        Me.btnWhereRuby.Name = "btnWhereRuby"
+        Me.btnWhereRuby.Size = New System.Drawing.Size(75, 23)
+        Me.btnWhereRuby.TabIndex = 37
+        Me.btnWhereRuby.Text = "Where"
+        Me.btnWhereRuby.UseVisualStyleBackColor = True
+        '
+        'btnRuby
+        '
+        Me.btnRuby.Location = New System.Drawing.Point(551, 198)
+        Me.btnRuby.Name = "btnRuby"
+        Me.btnRuby.Size = New System.Drawing.Size(75, 23)
+        Me.btnRuby.TabIndex = 36
+        Me.btnRuby.Text = "Browse"
+        Me.btnRuby.UseVisualStyleBackColor = True
+        '
+        'tbxPathRuby
+        '
+        Me.tbxPathRuby.Location = New System.Drawing.Point(150, 200)
+        Me.tbxPathRuby.Name = "tbxPathRuby"
+        Me.tbxPathRuby.Size = New System.Drawing.Size(395, 20)
+        Me.tbxPathRuby.TabIndex = 35
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.CausesValidation = False
+        Me.Label13.Location = New System.Drawing.Point(112, 203)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(32, 13)
+        Me.Label13.TabIndex = 34
+        Me.Label13.Text = "Ruby"
+        Me.Label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'btnWhereMKVMerge
         '
@@ -384,6 +434,12 @@ Partial Class UserPreferences
         '
         'TabPage2
         '
+        Me.TabPage2.Controls.Add(Me.tbxothertranscodeoptions)
+        Me.TabPage2.Controls.Add(Me.Label12)
+        Me.TabPage2.Controls.Add(Me.tbxMKVMergeOptions)
+        Me.TabPage2.Controls.Add(Me.Label11)
+        Me.TabPage2.Controls.Add(Me.tbxRobocopyDefaults)
+        Me.TabPage2.Controls.Add(Me.Label10)
         Me.TabPage2.Controls.Add(Me.tbxOtherTranscodeDefaults)
         Me.TabPage2.Controls.Add(Me.Label7)
         Me.TabPage2.Controls.Add(Me.tbxMKVMergeDefaults)
@@ -395,6 +451,57 @@ Partial Class UserPreferences
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Default Options"
         Me.TabPage2.UseVisualStyleBackColor = True
+        '
+        'tbxothertranscodeoptions
+        '
+        Me.tbxothertranscodeoptions.Location = New System.Drawing.Point(150, 96)
+        Me.tbxothertranscodeoptions.Name = "tbxothertranscodeoptions"
+        Me.tbxothertranscodeoptions.Size = New System.Drawing.Size(395, 20)
+        Me.tbxothertranscodeoptions.TabIndex = 9
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Location = New System.Drawing.Point(23, 99)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(123, 13)
+        Me.Label12.TabIndex = 8
+        Me.Label12.Text = "other-transcoder Options"
+        Me.Label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'tbxMKVMergeOptions
+        '
+        Me.tbxMKVMergeOptions.Location = New System.Drawing.Point(150, 122)
+        Me.tbxMKVMergeOptions.Name = "tbxMKVMergeOptions"
+        Me.tbxMKVMergeOptions.Size = New System.Drawing.Size(395, 20)
+        Me.tbxMKVMergeOptions.TabIndex = 7
+        '
+        'Label11
+        '
+        Me.Label11.AutoSize = True
+        Me.Label11.Location = New System.Drawing.Point(46, 125)
+        Me.Label11.Name = "Label11"
+        Me.Label11.Size = New System.Drawing.Size(99, 13)
+        Me.Label11.TabIndex = 6
+        Me.Label11.Text = "MKVMerge Options"
+        Me.Label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        'tbxRobocopyDefaults
+        '
+        Me.tbxRobocopyDefaults.Location = New System.Drawing.Point(150, 70)
+        Me.tbxRobocopyDefaults.Name = "tbxRobocopyDefaults"
+        Me.tbxRobocopyDefaults.Size = New System.Drawing.Size(395, 20)
+        Me.tbxRobocopyDefaults.TabIndex = 5
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(46, 73)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(98, 13)
+        Me.Label10.TabIndex = 4
+        Me.Label10.Text = "Robocopy Defaults"
+        Me.Label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'tbxOtherTranscodeDefaults
         '
@@ -439,6 +546,7 @@ Partial Class UserPreferences
         Me.Controls.Add(Me.btnOK)
         Me.Controls.Add(Me.btnCancel)
         Me.Name = "UserPreferences"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "UserPreferences"
         Me.TabControl1.ResumeLayout(False)
         Me.TabPage1.ResumeLayout(False)
@@ -487,4 +595,14 @@ Partial Class UserPreferences
     Friend WithEvents btnPathMKVPropEdit As Button
     Friend WithEvents tbxPathMKVPropEdit As TextBox
     Friend WithEvents Label8 As Label
+    Friend WithEvents tbxRobocopyDefaults As TextBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents tbxothertranscodeoptions As TextBox
+    Friend WithEvents Label12 As Label
+    Friend WithEvents tbxMKVMergeOptions As TextBox
+    Friend WithEvents Label11 As Label
+    Friend WithEvents btnWhereRuby As Button
+    Friend WithEvents btnRuby As Button
+    Friend WithEvents tbxPathRuby As TextBox
+    Friend WithEvents Label13 As Label
 End Class

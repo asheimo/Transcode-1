@@ -150,6 +150,7 @@ Partial Class RunRemux
         Me.Controls.Add(Me.btnStart)
         Me.Controls.Add(Me.rtbProgress)
         Me.Name = "RunRemux"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "RunRemux"
         Me.ContextMenuStrip1.ResumeLayout(False)
         Me.ResumeLayout(False)

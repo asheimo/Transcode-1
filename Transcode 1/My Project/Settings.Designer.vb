@@ -152,7 +152,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute(""" --copy-track-names --add-audio eng --add-subtitle eng """)>  _
         Public Property othertranscode_Defaults() As String
             Get
                 Return CType(Me("othertranscode_Defaults"),String)
@@ -160,6 +160,62 @@ Namespace My
             Set
                 Me("othertranscode_Defaults") = value
             End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute(""" /is /njs /ndl /nc /ns""")>  _
+        Public Property RoboCopy_Defaults() As String
+            Get
+                Return CType(Me("RoboCopy_Defaults"),String)
+            End Get
+            Set
+                Me("RoboCopy_Defaults") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("""--copy-track-names """)>  _
+        Public Property othertranscode_Options() As String
+            Get
+                Return CType(Me("othertranscode_Options"),String)
+            End Get
+            Set
+                Me("othertranscode_Options") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute(""" --no-buttons --no-attachments """)>  _
+        Public Property MKVMerge_options() As String
+            Get
+                Return CType(Me("MKVMerge_options"),String)
+            End Get
+            Set
+                Me("MKVMerge_options") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
+        Public Property Ruby_Path() As String
+            Get
+                Return CType(Me("Ruby_Path"),String)
+            End Get
+            Set
+                Me("Ruby_Path") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute()>  _
+        Public ReadOnly Property MainFormLocation() As Global.System.Drawing.Point
+            Get
+                Return CType(Me("MainFormLocation"),Global.System.Drawing.Point)
+            End Get
         End Property
     End Class
 End Namespace

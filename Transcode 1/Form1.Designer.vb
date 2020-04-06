@@ -38,6 +38,7 @@ Partial Class Form1
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RunRemuxToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PreferencesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
@@ -83,7 +84,6 @@ Partial Class Form1
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.btnTranscode = New System.Windows.Forms.Button()
         Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
-        Me.PreferencesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -216,6 +216,12 @@ Partial Class Form1
         Me.RunRemuxToolStripMenuItem.Name = "RunRemuxToolStripMenuItem"
         Me.RunRemuxToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.RunRemuxToolStripMenuItem.Text = "Run Remux"
+        '
+        'PreferencesToolStripMenuItem
+        '
+        Me.PreferencesToolStripMenuItem.Name = "PreferencesToolStripMenuItem"
+        Me.PreferencesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.PreferencesToolStripMenuItem.Text = "Preferences"
         '
         'ExitToolStripMenuItem
         '
@@ -568,12 +574,6 @@ Partial Class Form1
         Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
         Me.ClassMyTreeView1.TabIndex = 27
         '
-        'PreferencesToolStripMenuItem
-        '
-        Me.PreferencesToolStripMenuItem.Name = "PreferencesToolStripMenuItem"
-        Me.PreferencesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.PreferencesToolStripMenuItem.Text = "Preferences"
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -605,6 +605,7 @@ Partial Class Form1
         Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.Name = "Form1"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Transcode Tools"
         Me.cmsTitleEdit.ResumeLayout(False)
         Me.MenuStrip1.ResumeLayout(False)
