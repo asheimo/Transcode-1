@@ -34,7 +34,7 @@ Public Class RunRemux
         End If
     End Sub
 
-    Private Function RunProcessing(txt, blnCopy)
+    Private Sub RunProcessing(txt, blnCopy)
         Dim strOutputDirectory
         Dim arrFilePart1()
         Dim strCommand
@@ -52,13 +52,15 @@ Public Class RunRemux
                 strOutputFile = Mid(Replace(arrFilePart1(1), Chr(34), ""), InStr(Replace(arrFilePart1(1), Chr(34), ""), " ") + 1)
                 strOutputDirectory = Strings.Left(strOutputFile, InStrRev(strOutputFile, "\") - 1)
             ElseIf Form1.rbCreate.Checked Then
+                arrFilePart1 = Nothing
                 strOutputFile = Split(My.Computer.FileSystem.ReadAllText(txt), Chr(34))(1)
-                strOutputDirectory = Form1.tbxOutputDirectory.Text & "\" & Split(My.Computer.FileSystem.ReadAllText(txt), "\")(2)
+                strOutputDirectory = Form1.tbxOutputDirectory.Text & "\" & Split(strOutputFile, "\")(2)
             Else
+                arrFilePart1 = Nothing
                 Using New Centered_MessageBox(Me)
                     MsgBox("Error, Aborting", vbCritical, "Error")
                 End Using
-                Exit Function
+                Exit Sub
             End If
         End If
         'check for movie folder and create if needed
@@ -72,7 +74,7 @@ Public Class RunRemux
                 strCommand = "Robocopy"
                 strArgs = Replace(Chr(34) & txt, "|", Chr(34) & " " & Chr(34)) & Chr(34) & My.Settings.RoboCopy_Defaults
             ElseIf Form1.rbCreate.Checked Then
-                strCommand = "ruby"
+                strCommand = My.Settings.Ruby_Path & " "
                 strPath = Replace(arrFilePart1(0), Chr(34), "") & "\" & Replace(arrFilePart1(2), Chr(34), "")
                 If cbxHEVC.Checked Then
                     strArgs = My.Settings.othertranscode_Path & " --hevc " & My.Settings.othertranscode_Defaults & Chr(34) & strPath & Chr(34)
@@ -83,15 +85,19 @@ Public Class RunRemux
                 Using New Centered_MessageBox(Me)
                     MsgBox("Error, Aborting", vbCritical, "Error")
                 End Using
-                Exit Function
+                Exit Sub
             End If
         Else
             If Form1.rbRemux.Checked Then
                 strCommand = Trim(Split(My.Computer.FileSystem.ReadAllText(txt), "--")(0))
                 strArgs = Mid(My.Computer.FileSystem.ReadAllText(txt), Len(strCommand) + 1)
             ElseIf Form1.rbCreate.Checked Then
-                strCommand = "ruby"
-                strArgs = My.Settings.Ruby_Path & My.Computer.FileSystem.ReadAllText(txt)
+                strCommand = My.Settings.Ruby_Path & " "
+                strArgs = My.Computer.FileSystem.ReadAllText(txt)
+            Else
+                strCommand = ""
+                strArgs = ""
+
             End If
         End If
 
@@ -113,7 +119,7 @@ Public Class RunRemux
             Application.DoEvents()
         End While
 
-    End Function
+    End Sub
 
     Sub StreamView(ByVal sender As Object, ByVal e As DataReceivedEventArgs)
         UpdateTextBox(e.Data)
@@ -186,12 +192,14 @@ Public Class RunRemux
             pbOverallProgress.Maximum = clbxDirectory.CheckedItems.Count
         End If
         For Each item In clbxDirectory.CheckedItems
+            lblOverallProgress.Text = "Total Progress " & pbOverallProgress.Value & "/" & pbOverallProgress.Maximum
             objFolder = objFSO.GetFolder(strRootDirectory & item)
             objFiles = objFolder.Files
             pbFolderProgress.Maximum = objFiles.count
             pbFolderProgress.Value = 1
             If Form1.rbRemux.Checked Then
                 For Each Title In objFiles
+                    lblFolderProgress.Text = "Folder Progress " & pbFolderProgress.Value & "/" & pbFolderProgress.Maximum
                     'check for remux file
                     strRemuxName = strRootDirectory & "Remux\" & objFolder.name & "\" & Strings.Left(Title.name, Strings.Len(Title.name) - 4) & ".txt"
                     If File.Exists(strRemuxName) Then
@@ -206,6 +214,7 @@ Public Class RunRemux
                 Next
             ElseIf Form1.rbCreate.Checked Then
                 For Each Title In objFiles
+                    lblFolderProgress.Text = "Folder Progress " & pbFolderProgress.Value & "/" & pbFolderProgress.Maximum
                     'check for Transcode file
                     strRemuxName = strRootDirectory & "Transcode\" & objFolder.name & "\" & Strings.Left(Title.name, Strings.Len(Title.name) - 4) & ".txt"
                     If File.Exists(strRemuxName) Then

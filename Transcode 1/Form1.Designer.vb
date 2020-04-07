@@ -70,10 +70,6 @@ Partial Class Form1
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.DataGridView4 = New System.Windows.Forms.DataGridView()
-        Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.DataGridViewTextBoxColumn2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
-        Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()
-        Me.Column21 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.DataGridView5 = New System.Windows.Forms.DataGridView()
         Me.DataGridViewTextBoxColumn4 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column20 = New System.Windows.Forms.DataGridViewComboBoxColumn()
@@ -84,6 +80,10 @@ Partial Class Form1
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.btnTranscode = New System.Windows.Forms.Button()
         Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
+        Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.DataGridViewTextBoxColumn2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.Column21 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -214,19 +214,19 @@ Partial Class Form1
         'RunRemuxToolStripMenuItem
         '
         Me.RunRemuxToolStripMenuItem.Name = "RunRemuxToolStripMenuItem"
-        Me.RunRemuxToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.RunRemuxToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.RunRemuxToolStripMenuItem.Text = "Run Remux"
         '
         'PreferencesToolStripMenuItem
         '
         Me.PreferencesToolStripMenuItem.Name = "PreferencesToolStripMenuItem"
-        Me.PreferencesToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.PreferencesToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.PreferencesToolStripMenuItem.Text = "Preferences"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'AboutToolStripMenuItem
@@ -442,40 +442,6 @@ Partial Class Form1
         Me.DataGridView4.Size = New System.Drawing.Size(772, 54)
         Me.DataGridView4.TabIndex = 34
         '
-        'DataGridViewTextBoxColumn1
-        '
-        Me.DataGridViewTextBoxColumn1.FillWeight = 284.7716!
-        Me.DataGridViewTextBoxColumn1.HeaderText = "Track Info"
-        Me.DataGridViewTextBoxColumn1.Name = "DataGridViewTextBoxColumn1"
-        Me.DataGridViewTextBoxColumn1.ReadOnly = True
-        Me.DataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
-        Me.DataGridViewTextBoxColumn1.Width = 378
-        '
-        'DataGridViewTextBoxColumn2
-        '
-        Me.DataGridViewTextBoxColumn2.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
-        Me.DataGridViewTextBoxColumn2.FillWeight = 7.614212!
-        Me.DataGridViewTextBoxColumn2.HeaderText = "Resolution"
-        Me.DataGridViewTextBoxColumn2.Items.AddRange(New Object() {"Keep", "480p", "720p", "1080p", "2160p"})
-        Me.DataGridViewTextBoxColumn2.Name = "DataGridViewTextBoxColumn2"
-        Me.DataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
-        '
-        'Column5
-        '
-        Me.Column5.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
-        Me.Column5.FillWeight = 7.614212!
-        Me.Column5.HeaderText = "Output Format"
-        Me.Column5.Items.AddRange(New Object() {"h.264", "hevc"})
-        Me.Column5.Name = "Column5"
-        '
-        'Column21
-        '
-        Me.Column21.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
-        Me.Column21.HeaderText = "Frame Rate"
-        Me.Column21.Items.AddRange(New Object() {"Keep", "30000/1001", "24000/1001"})
-        Me.Column21.Name = "Column21"
-        Me.Column21.Width = 150
-        '
         'DataGridView5
         '
         Me.DataGridView5.AllowDrop = True
@@ -573,6 +539,40 @@ Partial Class Form1
         Me.ClassMyTreeView1.Name = "ClassMyTreeView1"
         Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
         Me.ClassMyTreeView1.TabIndex = 27
+        '
+        'DataGridViewTextBoxColumn1
+        '
+        Me.DataGridViewTextBoxColumn1.FillWeight = 284.7716!
+        Me.DataGridViewTextBoxColumn1.HeaderText = "Track Info"
+        Me.DataGridViewTextBoxColumn1.Name = "DataGridViewTextBoxColumn1"
+        Me.DataGridViewTextBoxColumn1.ReadOnly = True
+        Me.DataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
+        Me.DataGridViewTextBoxColumn1.Width = 378
+        '
+        'DataGridViewTextBoxColumn2
+        '
+        Me.DataGridViewTextBoxColumn2.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
+        Me.DataGridViewTextBoxColumn2.FillWeight = 7.614212!
+        Me.DataGridViewTextBoxColumn2.HeaderText = "Resolution"
+        Me.DataGridViewTextBoxColumn2.Items.AddRange(New Object() {"Keep", "480p", "720p", "1080p", "2160p"})
+        Me.DataGridViewTextBoxColumn2.Name = "DataGridViewTextBoxColumn2"
+        Me.DataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        '
+        'Column5
+        '
+        Me.Column5.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
+        Me.Column5.FillWeight = 7.614212!
+        Me.Column5.HeaderText = "Output Format"
+        Me.Column5.Items.AddRange(New Object() {"h.264 (default)", "hevc"})
+        Me.Column5.Name = "Column5"
+        '
+        'Column21
+        '
+        Me.Column21.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
+        Me.Column21.HeaderText = "Frame Rate"
+        Me.Column21.Items.AddRange(New Object() {"Keep", "30000/1001", "24000/1001"})
+        Me.Column21.Name = "Column21"
+        Me.Column21.Width = 150
         '
         'Form1
         '
@@ -672,10 +672,6 @@ Partial Class Form1
     Friend WithEvents DataGridView5 As DataGridView
     Friend WithEvents DataGridView6 As DataGridView
     Friend WithEvents btnTranscode As Button
-    Friend WithEvents DataGridViewTextBoxColumn1 As DataGridViewTextBoxColumn
-    Friend WithEvents DataGridViewTextBoxColumn2 As DataGridViewComboBoxColumn
-    Friend WithEvents Column5 As DataGridViewComboBoxColumn
-    Friend WithEvents Column21 As DataGridViewComboBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn4 As DataGridViewTextBoxColumn
     Friend WithEvents Column20 As DataGridViewComboBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn5 As DataGridViewComboBoxColumn
@@ -683,4 +679,8 @@ Partial Class Form1
     Friend WithEvents DataGridViewTextBoxColumn9 As DataGridViewTextBoxColumn
     Friend WithEvents Column22 As DataGridViewCheckBoxColumn
     Friend WithEvents PreferencesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents DataGridViewTextBoxColumn1 As DataGridViewTextBoxColumn
+    Friend WithEvents DataGridViewTextBoxColumn2 As DataGridViewComboBoxColumn
+    Friend WithEvents Column5 As DataGridViewComboBoxColumn
+    Friend WithEvents Column21 As DataGridViewComboBoxColumn
 End Class

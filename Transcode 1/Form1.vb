@@ -221,7 +221,7 @@ Public Class Form1
         Dim strPathMode As String
         Dim strPathModeMovie As String
         Dim strPathModeFile As String
-        Dim arrRemuxSettings
+        Dim arrSettings
         Dim arrTracks
         Dim arrDetails()
 
@@ -229,83 +229,118 @@ Public Class Form1
             strPathMode = txtInputDirectory.Text & "\Remux"
         Else
             strPathMode = txtInputDirectory.Text & "\Transcode"
-
         End If
         strPathModeMovie = strPathMode & "\" & lbxDirectory.SelectedItem
         strPathModeFile = strPathModeMovie & "\" & strFileName & ".txt"
 
         If Not File.Exists(strPathModeFile) Then Exit Sub
-        arrRemuxSettings = Split(My.Computer.FileSystem.ReadAllText(strPathModeFile), "--")
-        For Each arrSetting In arrRemuxSettings
-            If Strings.Left(LCase(arrSetting), 12) = "audio-tracks" Then
-                arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
-                For Each Track In arrTracks
-                    For Each info As DataGridViewRow In DataGridView2.Rows
-                        If info.Cells(6).Value = Track Then
-                            info.Selected = True
-                        End If
-                    Next
-                Next
-            ElseIf Strings.Left(LCase(Trim(arrSetting)), 15) = "subtitle-tracks" Then
-                arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
-                For Each Track In arrTracks
-                    For Each info As DataGridViewRow In DataGridView3.Rows
-                        If info.Cells(6).Value = Track Then
-                            info.Selected = True
-                        End If
-                    Next
-                Next
-            ElseIf Strings.Left(LCase(arrSetting), 13) = "default-track" Then
-                arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
-                For Each Track In arrTracks
-                    For Each info As DataGridViewRow In DataGridView2.Rows
-                        If info.Cells(6).Value = Track And Not info.Cells(5).Value = True Then
-                            info.Cells(5).Value = False
-                        Else
-                            info.Cells(5).Value = True
-                        End If
-                    Next
-                    For Each info As DataGridViewRow In DataGridView3.Rows
-                        If info.Cells(6).Value = Track And Not info.Cells(4).Value = True Then
-                            info.Cells(4).Value = False
-                        Else
-                            info.Cells(4).Value = True
-                        End If
-                    Next
-                Next
-            ElseIf Strings.Left(LCase(arrSetting), 11) = "track-order" Then
-                arrTracks = Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", "")
-                Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
-                Dim i As Integer = 0
-                For Each row As DataGridViewRow In DataGridView2.Rows
-                    Dim j As Integer = 0
-                    'For Each column In DataGridView2.Columns
-                    'If row.IsNewRow Then Continue For
-                    For Each cell As DataGridViewCell In row.Cells
-                        output(i, j) = cell.Value.ToString
-                        j += 1
-                    Next
-                    'Next
-                    i += 1
-                Next
+        arrSettings = Split(My.Computer.FileSystem.ReadAllText(strPathModeFile), "--")
 
-                DataGridView2.Rows.Clear()
-                ReDim arrDetails(UBound(output, 2))
-                For Each Track In arrTracks
-                    For i = 0 To UBound(output)
-                        If output(i, 6) = Track Then
-                            For j = 0 To UBound(output, 2)
-                                arrDetails(j) = output(i, j).ToString
-                            Next
-                            RepopulateInfo(arrDetails, "Audio", output(i, 6))
-                        End If
-                    Next i
-                Next
-                For Each info As DataGridViewRow In DataGridView2.Rows
-                    info.Selected = True
-                Next
-            End If
-        Next
+        If rbRemux.Checked Then
+            For Each arrSetting In arrSettings
+                If Strings.Left(LCase(arrSetting), 12) = "audio-tracks" Then
+                    arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
+                    For Each Track In arrTracks
+                        For Each info As DataGridViewRow In DataGridView2.Rows
+                            If info.Cells(6).Value = Track Then
+                                info.Selected = True
+                            End If
+                        Next
+                    Next
+                ElseIf Strings.Left(LCase(Trim(arrSetting)), 15) = "subtitle-tracks" Then
+                    arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
+                    For Each Track In arrTracks
+                        For Each info As DataGridViewRow In DataGridView3.Rows
+                            If info.Cells(6).Value = Track Then
+                                info.Selected = True
+                            End If
+                        Next
+                    Next
+                ElseIf Strings.Left(LCase(arrSetting), 13) = "default-track" Then
+                    arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
+                    For Each Track In arrTracks
+                        For Each info As DataGridViewRow In DataGridView2.Rows
+                            If info.Cells(6).Value = Track And Not info.Cells(5).Value = True Then
+                                info.Cells(5).Value = False
+                            Else
+                                info.Cells(5).Value = True
+                            End If
+                        Next
+                        For Each info As DataGridViewRow In DataGridView3.Rows
+                            If info.Cells(6).Value = Track And Not info.Cells(4).Value = True Then
+                                info.Cells(4).Value = False
+                            Else
+                                info.Cells(4).Value = True
+                            End If
+                        Next
+                    Next
+                ElseIf Strings.Left(LCase(arrSetting), 11) = "track-order" Then
+                    arrTracks = Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", "")
+                    Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
+                    Dim i As Integer = 0
+                    For Each row As DataGridViewRow In DataGridView2.Rows
+                        Dim j As Integer = 0
+                        'For Each column In DataGridView2.Columns
+                        'If row.IsNewRow Then Continue For
+                        For Each cell As DataGridViewCell In row.Cells
+                            output(i, j) = cell.Value.ToString
+                            j += 1
+                        Next
+                        'Next
+                        i += 1
+                    Next
+
+                    DataGridView2.Rows.Clear()
+                    ReDim arrDetails(UBound(output, 2))
+                    For Each Track In arrTracks
+                        For i = 0 To UBound(output)
+                            If output(i, 6) = Track Then
+                                For j = 0 To UBound(output, 2)
+                                    arrDetails(j) = output(i, j).ToString
+                                Next
+                                RepopulateInfo(arrDetails, "Audio", output(i, 6))
+                            End If
+                        Next i
+                    Next
+                    For Each info As DataGridViewRow In DataGridView2.Rows
+                        info.Selected = True
+                    Next
+                End If
+            Next
+        Else
+            For Each arrSetting In arrSettings
+                If arrSetting = "eac3 " Then
+                    DataGridView5.Rows(0).Cells(1).Value = "eac3"
+                ElseIf arrSetting = "all-eac3 " Then
+                    For Each row In DataGridView5.Rows
+                        row.cells(1).value = "eac3"
+                    Next
+                ElseIf strings.left(arrSetting, 10) = "main-audio" Then
+                    If Strings.Right(arrSetting, 9) = "surround " Then
+                        DataGridView5.Rows(0).Cells(2).Value = "Surround"
+                    ElseIf Strings.Right(arrSetting, 7) = "stereo " Then
+                        DataGridView5.Rows(0).Cells(2).Value = "Stereo"
+                    End If
+                ElseIf Strings.Left(arrSetting, 9) = "add-audio" Then
+                    If Strings.Right(arrSetting, 9) = "original " Then
+                        With DataGridView5.Rows(Mid(arrSetting, InStr(arrSetting, "=") - 1, 1) - 1)
+                            .Cells(1).Value = "Keep"
+                            .Cells(2).Value = "Keep"
+                            .Cells(3).Value = "Keep"
+                        End With
+                    ElseIf Strings.Right(arrSetting, 7) = "stereo " Then
+                        DataGridView5.Rows(Mid(arrSetting, InStr(arrSetting, "=") - 1, 1)).Cells(2).Value = "Stereo"
+                    ElseIf Strings.Right(arrSetting, 9) = "surround " Then
+                        DataGridView5.Rows(Mid(arrSetting, InStr(arrSetting, "=") - 1, 1)).Cells(2).Value = "Surround"
+                    End If
+                ElseIf arrSetting = "hevc " Then
+                    DataGridView4.Rows(0).Cells(2).Value = "hevc"
+                ElseIf Strings.Left(arrSetting, 14) = "burn-subtitle " Then
+                    DataGridView6.Rows(Mid(arrSetting, InStr(arrSetting, " ") + 1, 1) - 1).Cells(1).Value = True
+                End If
+            Next
+
+        End If
 
     End Sub
 
@@ -957,6 +992,7 @@ Public Class Form1
             Dim strBitRate As Object
             Dim strDTS As Integer
             Dim i
+            Dim strOptions As String
 
             'Deal with video tracks
             For i = 0 To DataGridView4.Rows.Count - 1
@@ -986,7 +1022,7 @@ Public Class Form1
                 Else
                     strAudio = strAudio & "--add-audio " & i & "=" & LCase(strWidth) & " "
                 End If
-                If strCodec = "eac3" Then My.Settings.othertranscode_Options &= "--eac3 "
+                If strCodec = "eac3" Then strOptions = My.Settings.othertranscode_Options & "--eac3 "
                 i += 1
             Next
 
@@ -998,7 +1034,7 @@ Public Class Form1
                     If strSubtitle = "" Then
                         strSubtitle = "--burn-subtitle " & i & " "
                     Else
-                        strSubtitle = strSubtitle & "--burn-subtitle " & i & " "
+                        strSubtitle &= "--burn-subtitle " & i & " "
                     End If
                 Else
                     'add subtitle
@@ -1013,7 +1049,11 @@ Public Class Form1
 
             'create the proper file name
             If strDTS <> 0 And strCodec = "Keep" Then
-                My.Settings.othertranscode_Options &= "--pass-dts "
+                If strOptions = "" Then
+                    strOptions = My.Settings.othertranscode_Options
+                Else
+                    strOptions &= "--pass-dts "
+                End If
             End If
             If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
                 strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
@@ -1021,7 +1061,7 @@ Public Class Form1
                 strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
             End If
 
-            CreateCommandSettingsString = My.Settings.othertranscode_Path & " " & My.Settings.othertranscode_Options & If(strOutputFormat, "") & strAudio & strSubtitle _
+            CreateCommandSettingsString = My.Settings.othertranscode_Path & " " & strOptions & If(strOutputFormat, "") & strAudio & strSubtitle _
                   & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
         Else
             CreateCommandSettingsString = "Error"

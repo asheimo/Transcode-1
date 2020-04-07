@@ -101,7 +101,7 @@ Partial Class RunRemux
         '
         'pbFolderProgress
         '
-        Me.pbFolderProgress.Location = New System.Drawing.Point(484, 409)
+        Me.pbFolderProgress.Location = New System.Drawing.Point(498, 409)
         Me.pbFolderProgress.Name = "pbFolderProgress"
         Me.pbFolderProgress.Size = New System.Drawing.Size(100, 23)
         Me.pbFolderProgress.TabIndex = 6
@@ -109,17 +109,17 @@ Partial Class RunRemux
         '
         'lblFolderProgress
         '
-        Me.lblFolderProgress.AutoSize = True
-        Me.lblFolderProgress.Location = New System.Drawing.Point(398, 414)
+        Me.lblFolderProgress.Location = New System.Drawing.Point(380, 414)
         Me.lblFolderProgress.Name = "lblFolderProgress"
-        Me.lblFolderProgress.Size = New System.Drawing.Size(80, 13)
+        Me.lblFolderProgress.Size = New System.Drawing.Size(112, 13)
         Me.lblFolderProgress.TabIndex = 7
         Me.lblFolderProgress.Text = "Folder Progress"
+        Me.lblFolderProgress.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.lblFolderProgress.Visible = False
         '
         'pbOverallProgress
         '
-        Me.pbOverallProgress.Location = New System.Drawing.Point(700, 409)
+        Me.pbOverallProgress.Location = New System.Drawing.Point(732, 409)
         Me.pbOverallProgress.Name = "pbOverallProgress"
         Me.pbOverallProgress.Size = New System.Drawing.Size(100, 23)
         Me.pbOverallProgress.TabIndex = 8
@@ -127,12 +127,12 @@ Partial Class RunRemux
         '
         'lblOverallProgress
         '
-        Me.lblOverallProgress.AutoSize = True
         Me.lblOverallProgress.Location = New System.Drawing.Point(619, 414)
         Me.lblOverallProgress.Name = "lblOverallProgress"
-        Me.lblOverallProgress.Size = New System.Drawing.Size(75, 13)
+        Me.lblOverallProgress.Size = New System.Drawing.Size(107, 13)
         Me.lblOverallProgress.TabIndex = 9
         Me.lblOverallProgress.Text = "Total Progress"
+        Me.lblOverallProgress.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.lblOverallProgress.Visible = False
         '
         'RunRemux
