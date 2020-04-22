@@ -43,6 +43,8 @@ Public Class RunRemux
         Dim strOutputFile
         Dim strPath
 
+        'disable changing of the checkbox list
+        clbxDirectory.Enabled = False
         If blnCopy Then
             arrFilePart1 = Split(txt, "|")
             strOutputDirectory = arrFilePart1(1)
@@ -60,6 +62,7 @@ Public Class RunRemux
                 Using New Centered_MessageBox(Me)
                     MsgBox("Error, Aborting", vbCritical, "Error")
                 End Using
+                clbxDirectory.Enabled = True
                 Exit Sub
             End If
         End If
@@ -85,6 +88,7 @@ Public Class RunRemux
                 Using New Centered_MessageBox(Me)
                     MsgBox("Error, Aborting", vbCritical, "Error")
                 End Using
+                clbxDirectory.Enabled = True
                 Exit Sub
             End If
         Else
@@ -118,7 +122,7 @@ Public Class RunRemux
         While Not oProcess.HasExited
             Application.DoEvents()
         End While
-
+        clbxDirectory.Enabled = True
     End Sub
 
     Sub StreamView(ByVal sender As Object, ByVal e As DataReceivedEventArgs)

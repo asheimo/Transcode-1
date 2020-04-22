@@ -674,7 +674,9 @@ Public Class Form1
         Using oStreamReader As System.IO.StreamReader = oProcess.StandardOutput
             Do While Not oStreamReader.EndOfStream
                 arrDetails(i) = Split(oStreamReader.ReadLine, ",")
-                i += 1
+                If Strings.Left(arrDetails(i)(0), 6) = "stream" Then
+                    i += 1
+                End If
             Loop
         End Using
 
@@ -992,7 +994,7 @@ Public Class Form1
             Dim strBitRate As Object
             Dim strDTS As Integer
             Dim i
-            Dim strOptions As String
+            Dim strOptions As String = My.Settings.othertranscode_Options
 
             'Deal with video tracks
             For i = 0 To DataGridView4.Rows.Count - 1
