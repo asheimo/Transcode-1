@@ -79,7 +79,7 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn9 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.btnTranscode = New System.Windows.Forms.Button()
-        Me.ClassMyTreeView1 = New Transcode_1.ClassMyTreeView()
+        Me.ClassMyTreeView1 = New Transcode_Tools.ClassMyTreeView()
         Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.DataGridViewTextBoxColumn2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()

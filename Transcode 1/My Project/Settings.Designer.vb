@@ -15,7 +15,7 @@ Option Explicit On
 Namespace My
     
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0"),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.6.0.0"),  _
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
     Partial Friend NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -152,7 +152,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute(""" --copy-track-names --add-audio eng --add-subtitle eng """)>  _
+         Global.System.Configuration.DefaultSettingValueAttribute(" --copy-track-names --add-audio eng --add-subtitle eng ")>  _
         Public Property othertranscode_Defaults() As String
             Get
                 Return CType(Me("othertranscode_Defaults"),String)
@@ -164,7 +164,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute(""" /is /njs /ndl /nc /ns""")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute(" /is /njs /ndl /nc /ns")>  _
         Public Property RoboCopy_Defaults() As String
             Get
                 Return CType(Me("RoboCopy_Defaults"),String)
@@ -176,7 +176,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("""--copy-track-names """)>  _
+         Global.System.Configuration.DefaultSettingValueAttribute(" --copy-track-names ")>  _
         Public Property othertranscode_Options() As String
             Get
                 Return CType(Me("othertranscode_Options"),String)
@@ -188,7 +188,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute(""" --no-buttons --no-attachments """)>  _
+         Global.System.Configuration.DefaultSettingValueAttribute(" --no-buttons --no-attachments ")>  _
         Public Property MKVMerge_options() As String
             Get
                 Return CType(Me("MKVMerge_options"),String)
@@ -228,9 +228,9 @@ Namespace My
     Friend Module MySettingsProperty
         
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.Transcode_1.My.MySettings
+        Friend ReadOnly Property Settings() As Global.Transcode_Tools.My.MySettings
             Get
-                Return Global.Transcode_1.My.MySettings.Default
+                Return Global.Transcode_Tools.My.MySettings.Default
             End Get
         End Property
     End Module
