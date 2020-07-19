@@ -137,24 +137,27 @@ Public Class RunRemux
             Me.Invoke(del, args)
         Else
             If Tex = "Complete" Then
-                rtbProgress.Text &= "Job Complete" & vbCrLf
+                rtbProgress.Text &= vbCrLf & "Job Complete" & vbCrLf
             ElseIf Tex Is Nothing Then
                 rtbProgress.Text &= Tex & vbCrLf
             ElseIf Strings.Left(Tex, 6) = "frame=" Then
-                Dim lines As String() = rtbProgress.Lines
-                lines(rtbProgress.Lines.Count - 1) = Tex
-                rtbProgress.Lines = lines
+                rtbProgress.Text &= Tex
+                'Dim lines As String() = rtbProgress.Lines
+                'lines(rtbProgress.Lines.Count - 1) = Tex
+                'rtbProgress.Lines = lines
             ElseIf Strings.Left(Tex, 9) = "Progress:" Then
-                Dim lines As String() = rtbProgress.Lines
-                lines(rtbProgress.Lines.Count - 1) = Tex
-                rtbProgress.Lines = lines
-                If Tex = "Progress: 100%" Then
-                    rtbProgress.Text &= Environment.NewLine
-                End If
+                rtbProgress.Text &= Tex
+                'Dim lines As String() = rtbProgress.Lines
+                'lines(rtbProgress.Lines.Count - 1) = Tex
+                'rtbProgress.Lines = lines
+                'If Tex = "Progress: 100%" Then
+                '    rtbProgress.Text &= Environment.NewLine
+                'End If
             ElseIf Tex.EndsWith("%") Then
-                Dim lines As String() = rtbProgress.Lines
-                lines(rtbProgress.Lines.Count - 1) = Tex
-                rtbProgress.Lines = lines
+                rtbProgress.Text &= Tex
+                'Dim lines As String() = rtbProgress.Lines
+                'lines(rtbProgress.Lines.Count - 1) = Tex
+                'rtbProgress.Lines = lines
             Else
                 rtbProgress.Text &= Tex & vbCrLf
             End If

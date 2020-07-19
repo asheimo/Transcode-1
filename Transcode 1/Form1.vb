@@ -362,15 +362,15 @@ Public Class Form1
 
     Function RepopulateInfo(ByRef Arr(), ByRef strType, strTrack)
         Dim i
-        Dim strName
+        Dim strName = Nothing
         Dim strWidth
-        Dim strHeight
-        Dim strFPS
-        Dim strChannelLayout
+        Dim strHeight = Nothing
+        Dim strFPS = Nothing
+        Dim strChannelLayout = Nothing
         Dim strBitRate
-        Dim strLanguage
-        Dim strTitle
-        Dim strNumberOfFrames
+        Dim strLanguage = Nothing
+        Dim strTitle = Nothing
+        Dim strNumberOfFrames = Nothing
         Dim arrStream(Arr.Length - 1, 1)
         Dim blnDefault As Boolean
         Dim blnForced As Boolean
@@ -474,15 +474,15 @@ Public Class Form1
 
     Function FormatInfo(ByRef Arr(), ByRef strType, strTrack, strMode)
         Dim i
-        Dim strName
+        Dim strName = Nothing
         Dim strWidth
-        Dim strHeight
-        Dim strFPS
-        Dim strChannelLayout
-        Dim strBitRate
-        Dim strLanguage
-        Dim strTitle
-        Dim strNumberOfFrames
+        Dim strHeight = Nothing
+        Dim strFPS = Nothing
+        Dim strChannelLayout = Nothing
+        Dim strBitRate = Nothing
+        Dim strLanguage = Nothing
+        Dim strTitle = Nothing
+        Dim strNumberOfFrames = Nothing
         Dim arrStream(Arr.Length - 1, 1)
         Dim blnDefault As Boolean
         Dim blnForced As Boolean
@@ -899,11 +899,11 @@ Public Class Form1
 
     Private Function CreateCommandSettingsString()
         Dim strDefaultVideo
-        Dim strDefaultAudio
-        Dim strDefaultSubtitle
+        Dim strDefaultAudio = Nothing
+        Dim strDefaultSubtitle = Nothing
         Dim strVideo
-        Dim strAudio
-        Dim strSubtitle
+        Dim strAudio = Nothing
+        Dim strSubtitle = Nothing
         Dim strPathCommand As String
         Dim strPathCommandMovie As String
         Dim strFileName
