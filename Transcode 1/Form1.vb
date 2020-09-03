@@ -345,6 +345,7 @@ Public Class Form1
     End Sub
 
     Function GetStreamCount(strText)
+        GetStreamCount = 0
         Dim oProcess As New Process()
         Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & strText & Chr(34)) With {
             .CreateNoWindow = True,
@@ -360,7 +361,7 @@ Public Class Form1
         End Using
     End Function
 
-    Function RepopulateInfo(ByRef Arr(), ByRef strType, strTrack)
+    Sub RepopulateInfo(ByRef Arr(), ByRef strType, strTrack)
         Dim i
         Dim strName = Nothing
         Dim strWidth
@@ -470,9 +471,9 @@ Public Class Form1
             Dim z = 0
         End If
 
-    End Function
+    End Sub
 
-    Function FormatInfo(ByRef Arr(), ByRef strType, strTrack, strMode)
+    Sub FormatInfo(ByRef Arr(), ByRef strType, strTrack, strMode)
         Dim i
         Dim strName = Nothing
         Dim strWidth
@@ -629,7 +630,7 @@ Public Class Form1
             Dim z = 0
         End If
 
-    End Function
+    End Sub
 
     Function SplitArray(ByRef Arr())
         Dim i

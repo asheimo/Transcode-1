@@ -34,6 +34,7 @@ Partial Class RunRemux
         Me.lblFolderProgress = New System.Windows.Forms.Label()
         Me.pbOverallProgress = New System.Windows.Forms.ProgressBar()
         Me.lblOverallProgress = New System.Windows.Forms.Label()
+        Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
         Me.ContextMenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -135,6 +136,11 @@ Partial Class RunRemux
         Me.lblOverallProgress.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         Me.lblOverallProgress.Visible = False
         '
+        'NotifyIcon1
+        '
+        Me.NotifyIcon1.Text = "NotifyIcon1"
+        Me.NotifyIcon1.Visible = True
+        '
         'RunRemux
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -168,4 +174,5 @@ Partial Class RunRemux
     Friend WithEvents lblFolderProgress As Label
     Friend WithEvents pbOverallProgress As ProgressBar
     Friend WithEvents lblOverallProgress As Label
+    Friend WithEvents NotifyIcon1 As NotifyIcon
 End Class

@@ -141,23 +141,23 @@ Public Class RunRemux
             ElseIf Tex Is Nothing Then
                 rtbProgress.Text &= Tex & vbCrLf
             ElseIf Strings.Left(Tex, 6) = "frame=" Then
-                rtbProgress.Text &= Tex
-                'Dim lines As String() = rtbProgress.Lines
-                'lines(rtbProgress.Lines.Count - 1) = Tex
-                'rtbProgress.Lines = lines
+                'rtbProgress.Text &= Tex
+                Dim lines As String() = rtbProgress.Lines
+                lines(rtbProgress.Lines.Count - 1) = Tex
+                rtbProgress.Lines = lines
             ElseIf Strings.Left(Tex, 9) = "Progress:" Then
-                rtbProgress.Text &= Tex
-                'Dim lines As String() = rtbProgress.Lines
-                'lines(rtbProgress.Lines.Count - 1) = Tex
-                'rtbProgress.Lines = lines
-                'If Tex = "Progress: 100%" Then
-                '    rtbProgress.Text &= Environment.NewLine
-                'End If
+                'rtbProgress.Text &= Tex
+                Dim lines As String() = rtbProgress.Lines
+                lines(rtbProgress.Lines.Count - 1) = Tex
+                rtbProgress.Lines = lines
+                If Tex = "Progress: 100%" Then
+                    rtbProgress.Text &= Environment.NewLine
+                End If
             ElseIf Tex.EndsWith("%") Then
-                rtbProgress.Text &= Tex
-                'Dim lines As String() = rtbProgress.Lines
-                'lines(rtbProgress.Lines.Count - 1) = Tex
-                'rtbProgress.Lines = lines
+                'rtbProgress.Text &= Tex
+                Dim lines As String() = rtbProgress.Lines
+                lines(rtbProgress.Lines.Count - 1) = Tex
+                rtbProgress.Lines = lines
             Else
                 rtbProgress.Text &= Tex & vbCrLf
             End If
@@ -232,6 +232,7 @@ Public Class RunRemux
                         RunProcessing(Chr(34) & strRootDirectory & objFolder.name & "|" & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & "|" & Title.name & Chr(34), True)
                     End If
                     pbFolderProgress.PerformStep()
+                    rtbProgress.ResetText()
                 Next
 
             End If
