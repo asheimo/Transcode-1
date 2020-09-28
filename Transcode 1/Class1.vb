@@ -1,7 +1,6 @@
 ﻿Imports System.Text
-Imports System.Drawing
-Imports System.Windows.Forms
 Imports System.Runtime.InteropServices
+Imports System.Runtime.CompilerServices
 Class ClassMyTreeView
     Inherits TreeView
 
@@ -99,3 +98,22 @@ Class Centered_MessageBox
     'End Sub
 
 End Class
+
+Module ControlHelper
+    <Extension()>
+    Sub AddLine(ByVal box As RichTextBox, ByVal text As String, ByVal Optional maxLine As UInteger? = Nothing)
+        Dim newLineIndicator As String = vbLf
+
+        If maxLine IsNot Nothing AndAlso maxLine > 0 Then
+
+            If box.Lines.Count() >= maxLine Then
+                Dim lines As List(Of String) = box.Lines.ToList()
+                lines.RemoveAt(0)
+                box.Lines = lines.ToArray()
+            End If
+        End If
+
+        Dim line As String = If(String.IsNullOrEmpty(box.Text), text, newLineIndicator & text)
+        box.AppendText(line)
+    End Sub
+End Module

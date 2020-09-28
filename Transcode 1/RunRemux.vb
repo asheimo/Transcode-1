@@ -8,6 +8,7 @@ Public Class RunRemux
     End Function
     Const WM_SCROLL = 277
     Const SB_PAGEBOTTOM = 7
+    Dim blnCancel As Boolean = False
     Sub ScrollToBottom(ByVal RTBName As RichTextBox)
         SendMessage(RTBName.Handle,
                WM_SCROLL,
@@ -15,7 +16,17 @@ Public Class RunRemux
                IntPtr.Zero)
     End Sub 'then call ScrollToBottom instead of ScrollToCaret
     Private Sub BtnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
-        Me.Close()
+        If btnClose.Text = "Cancel" Then
+            Dim pList() As Process = Process.GetProcesses()
+            For Each prs In pList
+                If prs.ProcessName = "ffmpeg" Then
+                    prs.Kill()
+                    blnCancel = True
+                End If
+            Next
+        Else
+            Me.Close()
+        End If
     End Sub
 
     Private Sub RunRemux_Load(sender As Object, e As EventArgs) Handles Me.Load
@@ -137,8 +148,10 @@ Public Class RunRemux
             Me.Invoke(del, args)
         Else
             If Tex = "Complete" Then
+                'rtbProgress.AddLine("Job Complete", 200)
                 rtbProgress.Text &= vbCrLf & "Job Complete" & vbCrLf
             ElseIf Tex Is Nothing Then
+                'rtbProgress.AddLine(Tex, 200)
                 rtbProgress.Text &= Tex & vbCrLf
             ElseIf Strings.Left(Tex, 6) = "frame=" Then
                 'rtbProgress.Text &= Tex
@@ -151,7 +164,8 @@ Public Class RunRemux
                 lines(rtbProgress.Lines.Count - 1) = Tex
                 rtbProgress.Lines = lines
                 If Tex = "Progress: 100%" Then
-                    rtbProgress.Text &= Environment.NewLine
+                    rtbProgress.AddLine("", 200)
+                    'rtbProgress.Text &= Environment.NewLine
                 End If
             ElseIf Tex.EndsWith("%") Then
                 'rtbProgress.Text &= Tex
@@ -159,6 +173,7 @@ Public Class RunRemux
                 lines(rtbProgress.Lines.Count - 1) = Tex
                 rtbProgress.Lines = lines
             Else
+                'rtbProgress.AddLine(Tex, 200)
                 rtbProgress.Text &= Tex & vbCrLf
             End If
         End If
@@ -171,6 +186,7 @@ Public Class RunRemux
         Dim strRemuxName
         Dim strRootDirectory
 
+        btnClose.Text = "Cancel"
         rtbProgress.ResetText()
         lblFolderProgress.Visible = True
         lblOverallProgress.Visible = True
@@ -218,6 +234,15 @@ Public Class RunRemux
                         pbFolderProgress.PerformStep()
 
                     End If
+                    'If blnCancel Then
+                    '    UpdateTextBox("Job Cancelled")
+                    '    lblFolderProgress.Visible = False
+                    '    lblOverallProgress.Visible = False
+                    '    pbFolderProgress.Visible = False
+                    '    pbOverallProgress.Visible = False
+                    '    btnClose.Text = "Close"
+                    '    Exit Sub
+                    'End If
                 Next
             ElseIf Form1.rbCreate.Checked Then
                 For Each Title In objFiles
@@ -232,7 +257,25 @@ Public Class RunRemux
                         RunProcessing(Chr(34) & strRootDirectory & objFolder.name & "|" & Form1.tbxOutputDirectory.Text & "\" & objFolder.name & "|" & Title.name & Chr(34), True)
                     End If
                     pbFolderProgress.PerformStep()
-                    rtbProgress.ResetText()
+                    'rtbProgress.ResetText()
+                    If blnCancel Then
+                        Dim strDir As String = Form1.tbxOutputDirectory.Text & "\" & objFolder.name
+                        If File.Exists(strDir & "\" & Title.name) Then
+                            My.Computer.FileSystem.DeleteFile(strDir & "\" & Title.name)
+                        End If
+                        For Each foundFile As String In My.Computer.FileSystem.GetFiles(strDir, Microsoft.VisualBasic.FileIO.SearchOption.SearchAllSubDirectories, "_ffmpeg*")
+                            My.Computer.FileSystem.DeleteFile(foundFile)
+                            Exit For
+                        Next
+                        UpdateTextBox("Job Cancelled")
+                        lblFolderProgress.Visible = False
+                        lblOverallProgress.Visible = False
+                        pbFolderProgress.Visible = False
+                        pbOverallProgress.Visible = False
+                        btnClose.Text = "Close"
+                        blnCancel = False
+                        Exit Sub
+                    End If
                 Next
 
             End If
@@ -243,6 +286,8 @@ Public Class RunRemux
         lblOverallProgress.Visible = False
         pbFolderProgress.Visible = False
         pbOverallProgress.Visible = False
+        btnClose.Text = "Close"
+        blnCancel = False
     End Sub
 
     Private Sub RtbProgress_TextChanged(sender As Object, e As EventArgs) Handles rtbProgress.TextChanged
