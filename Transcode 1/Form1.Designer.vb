@@ -45,10 +45,6 @@ Partial Class Form1
         Me.tbxOutputDirectory = New System.Windows.Forms.TextBox()
         Me.btnOutputDirectory = New System.Windows.Forms.Button()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
-        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.DataGridView2 = New System.Windows.Forms.DataGridView()
         Me.Column6 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column7 = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -57,6 +53,8 @@ Partial Class Form1
         Me.Column10 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column11 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.Column12 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Title_Changed = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.Default_Changed = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.DataGridView3 = New System.Windows.Forms.DataGridView()
         Me.Column13 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column14 = New System.Windows.Forms.DataGridViewTextBoxColumn()
@@ -70,6 +68,10 @@ Partial Class Form1
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.DataGridView4 = New System.Windows.Forms.DataGridView()
+        Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.DataGridViewTextBoxColumn2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.Column21 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.DataGridView5 = New System.Windows.Forms.DataGridView()
         Me.DataGridViewTextBoxColumn4 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column20 = New System.Windows.Forms.DataGridViewComboBoxColumn()
@@ -80,10 +82,11 @@ Partial Class Form1
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.btnTranscode = New System.Windows.Forms.Button()
         Me.ClassMyTreeView1 = New Transcode_Tools.ClassMyTreeView()
-        Me.DataGridViewTextBoxColumn1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.DataGridViewTextBoxColumn2 = New System.Windows.Forms.DataGridViewComboBoxColumn()
-        Me.Column5 = New System.Windows.Forms.DataGridViewComboBoxColumn()
-        Me.Column21 = New System.Windows.Forms.DataGridViewComboBoxColumn()
+        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.colVidTrack = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -267,34 +270,11 @@ Partial Class Form1
         Me.DataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.DataGridView1.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3, Me.Column4})
+        Me.DataGridView1.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column1, Me.Column2, Me.Column3, Me.Column4, Me.colVidTrack})
         Me.DataGridView1.Location = New System.Drawing.Point(14, 239)
         Me.DataGridView1.Name = "DataGridView1"
         Me.DataGridView1.Size = New System.Drawing.Size(772, 54)
         Me.DataGridView1.TabIndex = 28
-        '
-        'Column1
-        '
-        Me.Column1.HeaderText = "Video Format"
-        Me.Column1.Name = "Column1"
-        Me.Column1.ReadOnly = True
-        '
-        'Column2
-        '
-        Me.Column2.HeaderText = "Resolution"
-        Me.Column2.Name = "Column2"
-        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
-        '
-        'Column3
-        '
-        Me.Column3.HeaderText = "fps"
-        Me.Column3.Name = "Column3"
-        '
-        'Column4
-        '
-        Me.Column4.HeaderText = "Default"
-        Me.Column4.Name = "Column4"
         '
         'DataGridView2
         '
@@ -305,7 +285,7 @@ Partial Class Form1
         Me.DataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.DataGridView2.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView2.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column6, Me.Column7, Me.Column8, Me.Column9, Me.Column10, Me.Column11, Me.Column12})
+        Me.DataGridView2.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.Column6, Me.Column7, Me.Column8, Me.Column9, Me.Column10, Me.Column11, Me.Column12, Me.Title_Changed, Me.Default_Changed})
         Me.DataGridView2.Location = New System.Drawing.Point(14, 299)
         Me.DataGridView2.Name = "DataGridView2"
         Me.DataGridView2.Size = New System.Drawing.Size(772, 109)
@@ -345,6 +325,22 @@ Partial Class Form1
         '
         Me.Column12.HeaderText = "Track ID"
         Me.Column12.Name = "Column12"
+        '
+        'Title_Changed
+        '
+        Me.Title_Changed.HeaderText = "Title Changed"
+        Me.Title_Changed.Name = "Title_Changed"
+        Me.Title_Changed.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Title_Changed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.Title_Changed.Visible = False
+        '
+        'Default_Changed
+        '
+        Me.Default_Changed.HeaderText = "Default Changed"
+        Me.Default_Changed.Name = "Default_Changed"
+        Me.Default_Changed.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Default_Changed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.Default_Changed.Visible = False
         '
         'DataGridView3
         '
@@ -441,6 +437,40 @@ Partial Class Form1
         Me.DataGridView4.Name = "DataGridView4"
         Me.DataGridView4.Size = New System.Drawing.Size(772, 54)
         Me.DataGridView4.TabIndex = 34
+        '
+        'DataGridViewTextBoxColumn1
+        '
+        Me.DataGridViewTextBoxColumn1.FillWeight = 284.7716!
+        Me.DataGridViewTextBoxColumn1.HeaderText = "Track Info"
+        Me.DataGridViewTextBoxColumn1.Name = "DataGridViewTextBoxColumn1"
+        Me.DataGridViewTextBoxColumn1.ReadOnly = True
+        Me.DataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
+        Me.DataGridViewTextBoxColumn1.Width = 378
+        '
+        'DataGridViewTextBoxColumn2
+        '
+        Me.DataGridViewTextBoxColumn2.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
+        Me.DataGridViewTextBoxColumn2.FillWeight = 7.614212!
+        Me.DataGridViewTextBoxColumn2.HeaderText = "Resolution"
+        Me.DataGridViewTextBoxColumn2.Items.AddRange(New Object() {"Keep", "480p", "720p", "1080p", "2160p"})
+        Me.DataGridViewTextBoxColumn2.Name = "DataGridViewTextBoxColumn2"
+        Me.DataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        '
+        'Column5
+        '
+        Me.Column5.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
+        Me.Column5.FillWeight = 7.614212!
+        Me.Column5.HeaderText = "Output Format"
+        Me.Column5.Items.AddRange(New Object() {"h.264 (default)", "hevc"})
+        Me.Column5.Name = "Column5"
+        '
+        'Column21
+        '
+        Me.Column21.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
+        Me.Column21.HeaderText = "Frame Rate"
+        Me.Column21.Items.AddRange(New Object() {"Keep", "30000/1001", "24000/1001"})
+        Me.Column21.Name = "Column21"
+        Me.Column21.Width = 150
         '
         'DataGridView5
         '
@@ -540,39 +570,34 @@ Partial Class Form1
         Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
         Me.ClassMyTreeView1.TabIndex = 27
         '
-        'DataGridViewTextBoxColumn1
+        'Column1
         '
-        Me.DataGridViewTextBoxColumn1.FillWeight = 284.7716!
-        Me.DataGridViewTextBoxColumn1.HeaderText = "Track Info"
-        Me.DataGridViewTextBoxColumn1.Name = "DataGridViewTextBoxColumn1"
-        Me.DataGridViewTextBoxColumn1.ReadOnly = True
-        Me.DataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
-        Me.DataGridViewTextBoxColumn1.Width = 378
+        Me.Column1.HeaderText = "Video Format"
+        Me.Column1.Name = "Column1"
+        Me.Column1.ReadOnly = True
         '
-        'DataGridViewTextBoxColumn2
+        'Column2
         '
-        Me.DataGridViewTextBoxColumn2.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
-        Me.DataGridViewTextBoxColumn2.FillWeight = 7.614212!
-        Me.DataGridViewTextBoxColumn2.HeaderText = "Resolution"
-        Me.DataGridViewTextBoxColumn2.Items.AddRange(New Object() {"Keep", "480p", "720p", "1080p", "2160p"})
-        Me.DataGridViewTextBoxColumn2.Name = "DataGridViewTextBoxColumn2"
-        Me.DataGridViewTextBoxColumn2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Column2.HeaderText = "Resolution"
+        Me.Column2.Name = "Column2"
+        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
         '
-        'Column5
+        'Column3
         '
-        Me.Column5.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
-        Me.Column5.FillWeight = 7.614212!
-        Me.Column5.HeaderText = "Output Format"
-        Me.Column5.Items.AddRange(New Object() {"h.264 (default)", "hevc"})
-        Me.Column5.Name = "Column5"
+        Me.Column3.HeaderText = "fps"
+        Me.Column3.Name = "Column3"
         '
-        'Column21
+        'Column4
         '
-        Me.Column21.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox
-        Me.Column21.HeaderText = "Frame Rate"
-        Me.Column21.Items.AddRange(New Object() {"Keep", "30000/1001", "24000/1001"})
-        Me.Column21.Name = "Column21"
-        Me.Column21.Width = 150
+        Me.Column4.HeaderText = "Default"
+        Me.Column4.Name = "Column4"
+        '
+        'colVidTrack
+        '
+        Me.colVidTrack.HeaderText = "Track Id"
+        Me.colVidTrack.Name = "colVidTrack"
+        Me.colVidTrack.Visible = False
         '
         'Form1
         '
@@ -580,9 +605,6 @@ Partial Class Form1
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 566)
         Me.Controls.Add(Me.btnTranscode)
-        Me.Controls.Add(Me.DataGridView6)
-        Me.Controls.Add(Me.DataGridView5)
-        Me.Controls.Add(Me.DataGridView4)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.StatusStrip1)
@@ -602,6 +624,9 @@ Partial Class Form1
         Me.Controls.Add(Me.txtInputDirectory)
         Me.Controls.Add(Me.btnInputDirectory)
         Me.Controls.Add(Me.lblMode)
+        Me.Controls.Add(Me.DataGridView4)
+        Me.Controls.Add(Me.DataGridView5)
+        Me.Controls.Add(Me.DataGridView6)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.Name = "Form1"
@@ -647,13 +672,6 @@ Partial Class Form1
     Friend WithEvents DataGridView3 As DataGridView
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
-    Friend WithEvents Column6 As DataGridViewTextBoxColumn
-    Friend WithEvents Column7 As DataGridViewTextBoxColumn
-    Friend WithEvents Column8 As DataGridViewTextBoxColumn
-    Friend WithEvents Column9 As DataGridViewTextBoxColumn
-    Friend WithEvents Column10 As DataGridViewTextBoxColumn
-    Friend WithEvents Column11 As DataGridViewCheckBoxColumn
-    Friend WithEvents Column12 As DataGridViewTextBoxColumn
     Friend WithEvents Column13 As DataGridViewTextBoxColumn
     Friend WithEvents Column14 As DataGridViewTextBoxColumn
     Friend WithEvents Column15 As DataGridViewTextBoxColumn
@@ -661,10 +679,6 @@ Partial Class Form1
     Friend WithEvents Column17 As DataGridViewCheckBoxColumn
     Friend WithEvents Column18 As DataGridViewCheckBoxColumn
     Friend WithEvents Column19 As DataGridViewTextBoxColumn
-    Friend WithEvents Column1 As DataGridViewTextBoxColumn
-    Friend WithEvents Column2 As DataGridViewTextBoxColumn
-    Friend WithEvents Column3 As DataGridViewTextBoxColumn
-    Friend WithEvents Column4 As DataGridViewCheckBoxColumn
     Friend WithEvents Button1 As Button
     Friend WithEvents RunRemuxToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Label1 As Label
@@ -683,4 +697,18 @@ Partial Class Form1
     Friend WithEvents DataGridViewTextBoxColumn2 As DataGridViewComboBoxColumn
     Friend WithEvents Column5 As DataGridViewComboBoxColumn
     Friend WithEvents Column21 As DataGridViewComboBoxColumn
+    Friend WithEvents Column6 As DataGridViewTextBoxColumn
+    Friend WithEvents Column7 As DataGridViewTextBoxColumn
+    Friend WithEvents Column8 As DataGridViewTextBoxColumn
+    Friend WithEvents Column9 As DataGridViewTextBoxColumn
+    Friend WithEvents Column10 As DataGridViewTextBoxColumn
+    Friend WithEvents Column11 As DataGridViewCheckBoxColumn
+    Friend WithEvents Column12 As DataGridViewTextBoxColumn
+    Friend WithEvents Title_Changed As DataGridViewCheckBoxColumn
+    Friend WithEvents Default_Changed As DataGridViewCheckBoxColumn
+    Friend WithEvents Column1 As DataGridViewTextBoxColumn
+    Friend WithEvents Column2 As DataGridViewTextBoxColumn
+    Friend WithEvents Column3 As DataGridViewTextBoxColumn
+    Friend WithEvents Column4 As DataGridViewCheckBoxColumn
+    Friend WithEvents colVidTrack As DataGridViewTextBoxColumn
 End Class

@@ -6,6 +6,10 @@ Public Class Form1
     Private dragRect As Rectangle
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
+        'Does the initial setup of the application and validates that all required programs
+        'are installed. If not present the user with a message to set the paths and 
+        'puts them to the preferences screen.
+
         rbRemux.Checked = True
         ValidateButtons("Load", True)
         If My.Settings.MPV_Path = "" Or
@@ -24,10 +28,14 @@ Public Class Form1
         End If
     End Sub
     Private Sub BtnDirectory_Click(sender As Object, e As EventArgs) Handles btnInputDirectory.Click
-
+        'When the input directory button is selected present a selection screen to
+        'pick the desired folder. Upon selection load the folder contents into the 
+        'lbxDirectory box
         Dim objFSO As Object
 
         objFSO = CreateObject("Scripting.FileSystemObject")
+        'We automatically clear the box anytime a new input is being chosen.
+        ' ***** Should probably put into the actual dialog section so that if the user cancels nothing is changed ***** 
         lbxDirectory.Items.Clear()
         txtInputDirectory.Clear()
         ClassMyTreeView1.Nodes.Clear()
@@ -49,96 +57,110 @@ Public Class Form1
     End Sub
 
     Private Sub LbxDirectory_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbxDirectory.SelectedIndexChanged
-
+        'When a object is selected in the lbxDirectory box is select populate the contents
+        'into the ClassMyTreeView1 box for the user to be able to select the individual items
         Dim objFSO
         Dim objFolder
         Dim objFiles
         Dim strPath
         Dim intNode As Integer
-        Dim strName, strName2  'temp variable
+        Dim strType As String 'type label from filename
+        Dim strLongName As String 'filename without extension
+        Dim strShortName As String 'filename without extension or type label
         Dim blnRemux As Boolean
 
         'Clear existing objects
         blnRemux = rbRemux.Checked
         ClassMyTreeView1.Nodes.Clear()
-        CleanUp()
+        CleanUp() 'Resets DataGrid Rows for new entries
 
+        'Get the path to the folder and return the files in said folder
         objFSO = CreateObject("Scripting.FileSystemObject")
         strPath = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem
         objFolder = objFSO.GetFolder(strPath)
         objFiles = objFolder.Files
 
-        ' Loop through each file  
+        'Loop through each file and read the labeling. The files need to be prenamed by the type
+        'of object they are trailer, featurette, deleted, interview etc. This then allows the files
+        'to be grouped in the selection window for organizational purposes. Also checks for a settings
+        'file either Remux or Transcode depending on the mode and if exists then change the color of the
+        'object to reflect that.
         For Each item In objFiles
-            strName = Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 10)
-            strName2 = Strings.Left(item.name, Strings.Len(item.name) - 4)
-            If Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 10) = "featurette" Then
+            strLongName = Strings.Left(item.name, Strings.Len(item.name) - 4)
+            If InStr(item.name, "-") <> 0 Then
+                strType = Strings.Left((Strings.Split(item.name, "-")(1)), Strings.Len(Strings.Split(item.name, "-")(1)) - 4)
+                strShortName = Strings.Left(strLongName, Strings.Len(strLongName) - Strings.Len(strType) - 1)
+            Else
+                strType = Strings.Left(item.name, Strings.Len(item.name) - 4)
+                strShortName = strType
+            End If
+            If strType = "featurette" Then
                 intNode = SearchTreeNodeParents("featurette")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 15))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 7) = "trailer" Then
+            ElseIf strType = "trailer" Then
                 intNode = SearchTreeNodeParents("trailer")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 12))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 15) = "behindthescenes" Then
+            ElseIf strType = "behindthescenes" Then
                 intNode = SearchTreeNodeParents("behindthescenes")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 20))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 7) = "deleted" Then
+            ElseIf strType = "deleted" Then
                 intNode = SearchTreeNodeParents("deleted")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 12))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 9) = "interview" Then
+            ElseIf strType = "interview" Then
                 intNode = SearchTreeNodeParents("interview")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 14))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 5) = "other" Then
+            ElseIf strType = "other" Then
                 intNode = SearchTreeNodeParents("other")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 10))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 5) = "scene" Then
+            ElseIf strType = "scene" Then
                 intNode = SearchTreeNodeParents("scene")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 10))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
-            ElseIf Strings.Right(Strings.Left(item.name, Strings.Len(item.name) - 4), 5) = "short" Then
+            ElseIf strType = "short" Then
                 intNode = SearchTreeNodeParents("short")
                 With ClassMyTreeView1.Nodes(intNode - 1)
-                    .Nodes.Add(Strings.Left(item.name, Strings.Len(item.name) - 10))
-                    If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                    .Nodes.Add(strShortName)
+                    If CheckSettingsFile(strLongName) Then
                         .LastNode.BackColor = Color.Green
                     End If
                 End With
             Else
-                ClassMyTreeView1.Nodes.Insert(0, Strings.Left(item.name, Strings.Len(item.name) - 4))
-                If CheckSettingsFile(Strings.Left(item.name, Strings.Len(item.name) - 4)) Then
+                ClassMyTreeView1.Nodes.Insert(0, strLongName)
+                If CheckSettingsFile(strLongName) Then
                     ClassMyTreeView1.Nodes(0).BackColor = Color.Green
                 End If
             End If
@@ -146,6 +168,8 @@ Public Class Form1
     End Sub
 
     Function SearchTreeNodeParents(strNodeName As String)
+        'Checks for the existance of a particular node such as featurette,
+        'trailer, etc and if not found creates said node
         Dim blnNodeFound As Boolean
         Dim i = 0
         If ClassMyTreeView1.Nodes.Count <> 0 Then
@@ -166,7 +190,8 @@ Public Class Form1
     End Function
 
     Private Sub ClassMyTreeView1_BeforeSelect(sender As Object, e As TreeViewCancelEventArgs) Handles ClassMyTreeView1.BeforeSelect
-
+        'captures the event when a object is selected from the tree to populate the grids below
+        'clears the grids based on what function the app is in Remux or Transcode
         If rbRemux.Checked Then
             DataGridView1.Rows.Clear()
             DataGridView2.Rows.Clear()
@@ -177,12 +202,16 @@ Public Class Form1
             DataGridView6.Rows.Clear()
         End If
 
+        'if the action that triggered the event is unknown then exit the sub
+        ' **** why isn't this the first thing in the sub? ****
         If e.Action = TreeViewAction.Unknown Then
             If e.Node Is Nothing Then Exit Sub
             If e.Node.Index = 0 Then
                 Exit Sub
             End If
         End If
+        'FirstNode is the container. If it doesn't exist then exit the sub because there
+        'is nothing to do. Otherwise expand or collapse the container as needed.
         If e.Node.FirstNode Is Nothing Then
             Exit Sub
         Else
@@ -199,7 +228,11 @@ Public Class Form1
     End Sub
 
     Private Sub ClassMyTreeView1_AfterSelect(sender As Object, e As TreeViewEventArgs) Handles ClassMyTreeView1.AfterSelect
+        'once the container has been opened or closed in the BeforeSelect event then process
+        'the selected item by populating the grids in the lower half or the window.
         If e.Node.Parent Is Nothing Then
+            'evaluate if the selected object is in a container to determine the filename to pass
+            'to the subs that do the processing.
             ProcessAfterSelect(e.Node.Text & ".mkv", Mode)
             ShowSelected(e.Node.Text)
         Else
@@ -209,15 +242,21 @@ Public Class Form1
     End Sub
 
     Function Mode()
+        'Function evaluates which mode radio button is selected.
+        'If for some reason no radio button is selected default to
+        'Remux mode and check the radio box.
         If rbRemux.Checked Then
             Mode = "Remux"
         ElseIf rbCreate.Checked Then
             Mode = "Create"
         Else
+            rbRemux.Checked = True
             Mode = "Remux"
         End If
     End Function
     Sub ShowSelected(strFileName)
+        'This modifies what has been entered by the processinfo sub with any settings that have
+        'already been saved into a processing file
         Dim strPathMode As String
         Dim strPathModeMovie As String
         Dim strPathModeFile As String
@@ -238,42 +277,52 @@ Public Class Form1
 
         If rbRemux.Checked Then
             For Each arrSetting In arrSettings
+                'check if audio track is listed in the existing settings file and if
+                'it is then highlight the row to reflect the state
                 If Strings.Left(LCase(arrSetting), 12) = "audio-tracks" Then
                     arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
-                    For Each Track In arrTracks
-                        For Each info As DataGridViewRow In DataGridView2.Rows
-                            If info.Cells(6).Value = Track Then
-                                info.Selected = True
-                            End If
-                        Next
+                    For Each info As DataGridViewRow In DataGridView2.Rows
+                        If info.Cells(6).Value = arrTracks Then
+                            info.Selected = True
+                        End If
                     Next
+                    'check if subtitle track is listed in the existing settings file and if
+                    'it is then highlight the row to reflect the state
                 ElseIf Strings.Left(LCase(Trim(arrSetting)), 15) = "subtitle-tracks" Then
                     arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
                     For Each Track In arrTracks
                         For Each info As DataGridViewRow In DataGridView3.Rows
-                            If info.Cells(6).Value = Track Then
+                            If info.Cells(6).Value = arrTracks Then
                                 info.Selected = True
                             End If
                         Next
                     Next
+                    'check if default track is listed in the existing settings file and if
+                    'it is then set the appropriate checkbox
+                    'Since a default track can be audio, video, or subtitle itterate
+                    'through each datagrid
+                    ' **** if the original default track is no longer default we have to figure out
+                    ' how to deal with it ****
                 ElseIf Strings.Left(LCase(arrSetting), 13) = "default-track" Then
                     arrTracks = Split(LCase(Trim(arrSetting)), " ")(1)
-                    For Each Track In arrTracks
-                        For Each info As DataGridViewRow In DataGridView2.Rows
-                            If info.Cells(6).Value = Track And Not info.Cells(5).Value = True Then
-                                info.Cells(5).Value = False
-                            Else
-                                info.Cells(5).Value = True
-                            End If
-                        Next
-                        For Each info As DataGridViewRow In DataGridView3.Rows
-                            If info.Cells(6).Value = Track And Not info.Cells(4).Value = True Then
-                                info.Cells(4).Value = False
-                            Else
-                                info.Cells(4).Value = True
-                            End If
-                        Next
+                    For Each info As DataGridViewRow In DataGridView1.Rows
+                        If info.Cells(4).Value = arrTracks And info.Cells(3).Value = False Then
+                            info.Cells(3).Value = True
+                        End If
                     Next
+                    For Each info As DataGridViewRow In DataGridView2.Rows
+                        If info.Cells(6).Value = arrTracks And info.Cells(5).Value = False Then
+                            info.Cells(5).Value = True
+                        End If
+                    Next
+                    For Each info As DataGridViewRow In DataGridView3.Rows
+                        If info.Cells(6).Value = arrTracks And info.Cells(4).Value = False Then
+                            info.Cells(4).Value = True
+                        End If
+                    Next
+                    'check if track order is different in the existing settings file and if
+                    'it is then re-order the rows to reflect the change
+                    ' **** I don't think this part works right now ****
                 ElseIf Strings.Left(LCase(arrSetting), 11) = "track-order" Then
                     arrTracks = Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", "")
                     Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
@@ -307,6 +356,8 @@ Public Class Form1
                     Next
                 End If
             Next
+            'This section is for dealing with transcode settings
+            ' **** Not yet verified ****
         Else
             For Each arrSetting In arrSettings
                 If arrSetting = "eac3 " Then
@@ -315,7 +366,7 @@ Public Class Form1
                     For Each row In DataGridView5.Rows
                         row.cells(1).value = "eac3"
                     Next
-                ElseIf strings.left(arrSetting, 10) = "main-audio" Then
+                ElseIf Strings.Left(arrSetting, 10) = "main-audio" Then
                     If Strings.Right(arrSetting, 9) = "surround " Then
                         DataGridView5.Rows(0).Cells(2).Value = "Surround"
                     ElseIf Strings.Right(arrSetting, 7) = "stereo " Then
@@ -344,10 +395,12 @@ Public Class Form1
 
     End Sub
 
-    Function GetStreamCount(strText)
+    Function GetStreamCount(FileName)
+        'Get the number of streams inside the file that has been selected
+        ' **** not sure why we need this maybe further in the commenting phase I'll understand why ****
         GetStreamCount = 0
         Dim oProcess As New Process()
-        Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & strText & Chr(34)) With {
+        Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -show_entries format=nb_streams -v 0 -of compact=p=0:nk=1 " & Chr(34) & FileName & Chr(34)) With {
             .CreateNoWindow = True,
             .UseShellExecute = False,
             .RedirectStandardOutput = True
@@ -355,9 +408,9 @@ Public Class Form1
         oProcess.StartInfo = oStartInfo
         oProcess.Start()
         Using oStreamReader As System.IO.StreamReader = oProcess.StandardOutput
-            Do While Not oStreamReader.EndOfStream
-                GetStreamCount = oStreamReader.ReadToEnd()
-            Loop
+            'Do While Not oStreamReader.EndOfStream
+            GetStreamCount = oStreamReader.ReadToEnd()
+            'Loop
         End Using
     End Function
 
@@ -474,6 +527,9 @@ Public Class Form1
     End Sub
 
     Sub FormatInfo(ByRef Arr(), ByRef strType, strTrack, strMode)
+        'formats the stream into the datagrid of the appropriate type
+        'input is everything ffprobe can return
+        ' **** might be smarter to break this into 3 subs; Video, Audio, and Subtitle for readability ****
         Dim i
         Dim strName = Nothing
         Dim strWidth
@@ -509,7 +565,8 @@ Public Class Form1
                             Else
                                 blnDefault = True
                             End If
-
+                        Case "index"
+                            strTrack = arrStream(i, 1)
                     End Select
                 Next
                 If strMode = "Remux" Then
@@ -519,6 +576,7 @@ Public Class Form1
                         .Rows(DGR).Cells(1).Value = strHeight & "p"
                         .Rows(DGR).Cells(2).Value = strFPS
                         .Rows(DGR).Cells(3).Value = blnDefault
+                        .Rows(DGR).Cells(4).Value = strTrack
                     End With
                 ElseIf strMode = "Create" Then
                     Dim DGR As Integer = DataGridView4.Rows.Add
@@ -633,16 +691,21 @@ Public Class Form1
     End Sub
 
     Function SplitArray(ByRef Arr())
+        'take the stream and convert each arraypoint and split it into the
+        'two parts or the point
         Dim i
-        Dim strCodec
         Dim arrTemp
         Dim arrStream(Arr.Length - 1, 1)
 
         For i = 0 To Arr.Length - 1
-            arrTemp = Split(Arr(i), "=")
-            On Error Resume Next
-            arrStream(i, 0) = arrTemp(0)
-            arrStream(i, 1) = arrTemp(1)
+            If InStr(Arr(i), "=") Then
+                arrTemp = Split(Arr(i), "=")
+                'On Error Resume Next
+                arrStream(i, 0) = arrTemp(0)
+                arrStream(i, 1) = arrTemp(1)
+            Else
+                arrStream(i, 0) = Arr(i)
+            End If
         Next i
         SplitArray = arrStream
     End Function
@@ -654,13 +717,16 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub ProcessAfterSelect(txt, strMode)
+    Private Sub ProcessAfterSelect(FileName, strMode)
+        'A file has been selected from the treeview now we have to look at it see what items
+        'are in the file and populate the grids
         Dim i
         Dim intCount As Integer
         Dim oProcess As New Process()
-        Dim strText = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & txt
-        intCount = GetStreamCount(strText)
-        Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -loglevel quiet -show_streams -print_format csv=nokey=0 " & Chr(34) & strText & Chr(34)) With {
+        'put together full filepath that is going to be evaluated
+        Dim strFileName = txtInputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & FileName
+        intCount = GetStreamCount(strFileName)
+        Dim oStartInfo As New ProcessStartInfo(My.Settings.ffprobe_Path, " -loglevel quiet -show_streams -print_format csv=nokey=0 " & Chr(34) & strFileName & Chr(34)) With {
             .CreateNoWindow = True,
             .UseShellExecute = False,
             .RedirectStandardOutput = True
@@ -672,6 +738,7 @@ Public Class Form1
         Dim arrDetails(intCount - 1)
 
         i = 0
+        'read the details of each stream into a 2d array
         Using oStreamReader As System.IO.StreamReader = oProcess.StandardOutput
             Do While Not oStreamReader.EndOfStream
                 arrDetails(i) = Split(oStreamReader.ReadLine, ",")
@@ -682,6 +749,7 @@ Public Class Form1
         End Using
 
         For i = 0 To UBound(arrDetails)
+            'determine what type of stream this is and populate the appropriate datagrid
             Dim arrStream() As String
             arrStream = arrDetails(i)
             Dim lReturn As String = Array.Find(arrStream, Function(x) (x.StartsWith("codec_type")))
@@ -697,6 +765,7 @@ Public Class Form1
     End Sub
 
     Private Sub CleanUp()
+        'Resets DataGrid Rows for new entries
         DataGridView1.Rows.Clear()
         DataGridView2.Rows.Clear()
         DataGridView3.Rows.Clear()
@@ -758,132 +827,134 @@ Public Class Form1
         ValidateButtons(sender.text, sender.checked)
     End Sub
     Private Sub ValidateButtons(strSource As String, State As Boolean)
+        'Takes input that can be Load, Remux, or Transcode then adjusts the form
+        'so that the appropriate buttons and grids are loaded.
         Dim blnRemux As Boolean
 
         If strSource = "Load" Then
             blnRemux = rbRemux.Checked
-            If blnRemux Then
-                strSource = "Remux"
-            End If
+            strSource = "Remux"
+
+            Select Case strSource
+                Case "Transcode"
+                    ClassMyTreeView1.Nodes.Clear()
+                    lbxDirectory.Items.Clear()
+                    tbxOutputDirectory.Clear()
+                    txtInputDirectory.Clear()
+                    RunRemuxToolStripMenuItem.Text = "Run Transcode"
+                    CleanUp()
+                    With btnMPV
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With btnSubtitleEdit
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With Button1
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With btnSaveRemux
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With btnTranscode
+                        .Enabled = True
+                        .Visible = True
+                    End With
+
+                    'Hide Remux grids
+                    With DataGridView1
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With DataGridView2
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With DataGridView3
+                        .Enabled = False
+                        .Visible = False
+                    End With
+
+                    'Show Transcode grids
+                    With DataGridView4
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With DataGridView5
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With DataGridView6
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                Case "Remux"
+                    ClassMyTreeView1.Nodes.Clear()
+                    lbxDirectory.Items.Clear()
+                    tbxOutputDirectory.Clear()
+                    txtInputDirectory.Clear()
+                    RunRemuxToolStripMenuItem.Text = "Run Remux"
+                    CleanUp()
+                    With btnMPV
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With btnSubtitleEdit
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With Button1
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With btnSaveRemux
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With btnTranscode
+                        .Enabled = False
+                        .Visible = False
+                    End With
+
+                    'Show Remux grids
+                    With DataGridView1
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With DataGridView2
+                        .Enabled = True
+                        .Visible = True
+                    End With
+                    With DataGridView3
+                        .Enabled = True
+                        .Visible = True
+                    End With
+
+                    'Hide Transcode grids
+                    With DataGridView4
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With DataGridView5
+                        .Enabled = False
+                        .Visible = False
+                    End With
+                    With DataGridView6
+                        .Enabled = False
+                        .Visible = False
+                    End With
+            End Select
         End If
-
-        Select Case strSource
-            Case "Transcode"
-                ClassMyTreeView1.Nodes.Clear()
-                lbxDirectory.Items.Clear()
-                tbxOutputDirectory.Clear()
-                txtInputDirectory.Clear()
-                RunRemuxToolStripMenuItem.Text = "Run Transcode"
-                CleanUp()
-                With btnMPV
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With btnSubtitleEdit
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With Button1
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With btnSaveRemux
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With btnTranscode
-                    .Enabled = True
-                    .Visible = True
-                End With
-
-                'Hide Remux grids
-                With DataGridView1
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With DataGridView2
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With DataGridView3
-                    .Enabled = False
-                    .Visible = False
-                End With
-
-                'Show Transcode grids
-                With DataGridView4
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With DataGridView5
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With DataGridView6
-                    .Enabled = True
-                    .Visible = True
-                End With
-            Case "Remux"
-                ClassMyTreeView1.Nodes.Clear()
-                lbxDirectory.Items.Clear()
-                tbxOutputDirectory.Clear()
-                txtInputDirectory.Clear()
-                RunRemuxToolStripMenuItem.Text = "Run Remux"
-                CleanUp()
-                With btnMPV
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With btnSubtitleEdit
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With Button1
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With btnSaveRemux
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With btnTranscode
-                    .Enabled = False
-                    .Visible = False
-                End With
-
-                'Show Remux grids
-                With DataGridView1
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With DataGridView2
-                    .Enabled = True
-                    .Visible = True
-                End With
-                With DataGridView3
-                    .Enabled = True
-                    .Visible = True
-                End With
-
-                'Hide Transcode grids
-                With DataGridView4
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With DataGridView5
-                    .Enabled = False
-                    .Visible = False
-                End With
-                With DataGridView6
-                    .Enabled = False
-                    .Visible = False
-                End With
-        End Select
-
     End Sub
 
     Private Sub BtnSaveRemux_Click(sender As Object, e As EventArgs) Handles btnSaveRemux.Click
+        'Deals with the button click for saving the remux settings 
         Dim strString
+        'validate that a output directory is selected otherwise advise the user
+        'that they need to select one
         If tbxOutputDirectory.Text = "" Then
             Using New Centered_MessageBox(Me)
                 MsgBox("No Output Directory Chosen. Save Cancelled.", vbOKOnly, "Error")
@@ -891,6 +962,8 @@ Public Class Form1
             Exit Sub
         End If
         strString = CreateCommandSettingsString()
+        'if the settings file already exists and the user chooses not to overwrite
+        'then an abort is returned to prevent and changes
         If strString = "Abort" Then
             Exit Sub
         End If
@@ -910,6 +983,7 @@ Public Class Form1
         Dim strFileName
         Dim strTrackOrder As String
         Dim arrTrackOrder
+        Dim strForcedTrack
 
         'set paths
         If rbRemux.Checked Then
@@ -959,10 +1033,13 @@ Public Class Form1
             Else
                 strTrackOrder = ""
             End If
-            'Deal with Subtitle Tracks
+            'Deal with Subtitle and forced Tracks
             For Each objItem As DataGridViewRow In DataGridView3.SelectedRows 'Subtitle tracks
                 If objItem.Cells(4).Value = True Then
                     strDefaultSubtitle = "--default-track " & objItem.Cells(6).Value
+                End If
+                If objItem.Cells(5).Value = True Then
+                    strForcedTrack = "--forced-track " & objItem.Cells(6).Value
                 End If
                 strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
             Next
@@ -974,14 +1051,16 @@ Public Class Form1
                 strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
             End If
 
+            'create the contents of the file
+            ' **** there are issues here because some items may by blank and should not be added ****
             If strTrackOrder <> "" Then
                 CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & My.Settings.MKVMerge_options & " " _
+                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strForcedTrack & " " & My.Settings.MKVMerge_options & " " _
                 & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
 
             Else
                 CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & My.Settings.MKVMerge_options & " " _
+                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strForcedTrack & " " & My.Settings.MKVMerge_options & " " _
                 & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
             End If
 
@@ -1146,6 +1225,7 @@ Public Class Form1
     End Sub
 
     Function AudioRemuxString(strAudio, Item)
+        'create the string for audio tracks that are selected
         If strAudio = "" Then
             strAudio = "--audio-tracks " & Item
         Else
@@ -1155,6 +1235,7 @@ Public Class Form1
     End Function
 
     Function SubtitleRemuxString(strSubtitle, Item)
+        'create the string for subtitle tracks that are selected
         If strSubtitle = "" Then
             strSubtitle = "--subtitle-tracks " & Item
         Else
@@ -1164,6 +1245,8 @@ Public Class Form1
     End Function
 
     Function CheckSettingsFile(strFileName)
+        'Chacks for the existance of a settings file that has already been
+        'created and returns true or false
         Dim strPathMode As String
         Dim strPathModeMovie As String
         Dim strPathModeFile As String
@@ -1365,4 +1448,5 @@ Public Class Form1
         Dim box = New UserPreferences()
         box.ShowDialog()
     End Sub
+
 End Class
