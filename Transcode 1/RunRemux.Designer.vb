@@ -26,7 +26,6 @@ Partial Class RunRemux
         Me.rtbProgress = New System.Windows.Forms.RichTextBox()
         Me.btnStart = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
-        Me.clbxDirectory = New System.Windows.Forms.CheckedListBox()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.SelectAllToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cbxHEVC = New System.Windows.Forms.CheckBox()
@@ -35,6 +34,7 @@ Partial Class RunRemux
         Me.pbOverallProgress = New System.Windows.Forms.ProgressBar()
         Me.lblOverallProgress = New System.Windows.Forms.Label()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
+        Me.tvBox = New System.Windows.Forms.TreeView()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -66,16 +66,6 @@ Partial Class RunRemux
         Me.btnClose.TabIndex = 3
         Me.btnClose.Text = "Close"
         Me.btnClose.UseVisualStyleBackColor = True
-        '
-        'clbxDirectory
-        '
-        Me.clbxDirectory.CheckOnClick = True
-        Me.clbxDirectory.ContextMenuStrip = Me.ContextMenuStrip1
-        Me.clbxDirectory.FormattingEnabled = True
-        Me.clbxDirectory.Location = New System.Drawing.Point(13, 13)
-        Me.clbxDirectory.Name = "clbxDirectory"
-        Me.clbxDirectory.Size = New System.Drawing.Size(207, 379)
-        Me.clbxDirectory.TabIndex = 4
         '
         'ContextMenuStrip1
         '
@@ -141,6 +131,14 @@ Partial Class RunRemux
         Me.NotifyIcon1.Text = "NotifyIcon1"
         Me.NotifyIcon1.Visible = True
         '
+        'tvBox
+        '
+        Me.tvBox.CheckBoxes = True
+        Me.tvBox.Location = New System.Drawing.Point(13, 13)
+        Me.tvBox.Name = "tvBox"
+        Me.tvBox.Size = New System.Drawing.Size(207, 379)
+        Me.tvBox.TabIndex = 10
+        '
         'RunRemux
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -151,10 +149,10 @@ Partial Class RunRemux
         Me.Controls.Add(Me.lblFolderProgress)
         Me.Controls.Add(Me.pbFolderProgress)
         Me.Controls.Add(Me.cbxHEVC)
-        Me.Controls.Add(Me.clbxDirectory)
         Me.Controls.Add(Me.btnClose)
         Me.Controls.Add(Me.btnStart)
         Me.Controls.Add(Me.rtbProgress)
+        Me.Controls.Add(Me.tvBox)
         Me.Name = "RunRemux"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "RunRemux"
@@ -166,7 +164,6 @@ Partial Class RunRemux
     Friend WithEvents rtbProgress As RichTextBox
     Friend WithEvents btnStart As Button
     Friend WithEvents btnClose As Button
-    Friend WithEvents clbxDirectory As CheckedListBox
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents SelectAllToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents cbxHEVC As CheckBox
@@ -175,4 +172,5 @@ Partial Class RunRemux
     Friend WithEvents pbOverallProgress As ProgressBar
     Friend WithEvents lblOverallProgress As Label
     Friend WithEvents NotifyIcon1 As NotifyIcon
+    Friend WithEvents tvBox As TreeView
 End Class

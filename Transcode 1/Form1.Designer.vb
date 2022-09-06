@@ -45,24 +45,13 @@ Partial Class Form1
         Me.tbxOutputDirectory = New System.Windows.Forms.TextBox()
         Me.btnOutputDirectory = New System.Windows.Forms.Button()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
+        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.colVidTrack = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.DataGridView2 = New System.Windows.Forms.DataGridView()
-        Me.Column6 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column7 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column8 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column9 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column10 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column11 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.Column12 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Title_Changed = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.Default_Changed = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.DataGridView3 = New System.Windows.Forms.DataGridView()
-        Me.Column13 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column14 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column15 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column16 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column17 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.Column18 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.Column19 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Button1 = New System.Windows.Forms.Button()
@@ -79,14 +68,27 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn6 = New System.Windows.Forms.DataGridViewComboBoxColumn()
         Me.DataGridView6 = New System.Windows.Forms.DataGridView()
         Me.DataGridViewTextBoxColumn9 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.chkboxTranscodeDefault = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.chkboxTranscodeForced = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.Column22 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.btnTranscode = New System.Windows.Forms.Button()
+        Me.Column13 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column14 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column15 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column16 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column17 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.Column18 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.Column19 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.ClassMyTreeView1 = New Transcode_Tools.ClassMyTreeView()
-        Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column3 = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.Column4 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
-        Me.colVidTrack = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column6 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column7 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column8 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column9 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column10 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Column11 = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.Column12 = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.Title_Changed = New System.Windows.Forms.DataGridViewCheckBoxColumn()
+        Me.Default_Changed = New System.Windows.Forms.DataGridViewCheckBoxColumn()
         Me.cmsTitleEdit.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -276,6 +278,35 @@ Partial Class Form1
         Me.DataGridView1.Size = New System.Drawing.Size(772, 54)
         Me.DataGridView1.TabIndex = 28
         '
+        'Column1
+        '
+        Me.Column1.HeaderText = "Video Format"
+        Me.Column1.Name = "Column1"
+        Me.Column1.ReadOnly = True
+        '
+        'Column2
+        '
+        Me.Column2.HeaderText = "Resolution"
+        Me.Column2.Name = "Column2"
+        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        '
+        'Column3
+        '
+        Me.Column3.HeaderText = "fps"
+        Me.Column3.Name = "Column3"
+        '
+        'Column4
+        '
+        Me.Column4.HeaderText = "Default"
+        Me.Column4.Name = "Column4"
+        '
+        'colVidTrack
+        '
+        Me.colVidTrack.HeaderText = "Track Id"
+        Me.colVidTrack.Name = "colVidTrack"
+        Me.colVidTrack.Visible = False
+        '
         'DataGridView2
         '
         Me.DataGridView2.AllowDrop = True
@@ -291,57 +322,6 @@ Partial Class Form1
         Me.DataGridView2.Size = New System.Drawing.Size(772, 109)
         Me.DataGridView2.TabIndex = 29
         '
-        'Column6
-        '
-        Me.Column6.HeaderText = "Audio Format"
-        Me.Column6.Name = "Column6"
-        '
-        'Column7
-        '
-        Me.Column7.HeaderText = "Width"
-        Me.Column7.Name = "Column7"
-        '
-        'Column8
-        '
-        Me.Column8.HeaderText = "Bit Rate (Kbps)"
-        Me.Column8.Name = "Column8"
-        '
-        'Column9
-        '
-        Me.Column9.HeaderText = "Language"
-        Me.Column9.Name = "Column9"
-        '
-        'Column10
-        '
-        Me.Column10.HeaderText = "Title"
-        Me.Column10.Name = "Column10"
-        '
-        'Column11
-        '
-        Me.Column11.HeaderText = "Default"
-        Me.Column11.Name = "Column11"
-        '
-        'Column12
-        '
-        Me.Column12.HeaderText = "Track ID"
-        Me.Column12.Name = "Column12"
-        '
-        'Title_Changed
-        '
-        Me.Title_Changed.HeaderText = "Title Changed"
-        Me.Title_Changed.Name = "Title_Changed"
-        Me.Title_Changed.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.Title_Changed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
-        Me.Title_Changed.Visible = False
-        '
-        'Default_Changed
-        '
-        Me.Default_Changed.HeaderText = "Default Changed"
-        Me.Default_Changed.Name = "Default_Changed"
-        Me.Default_Changed.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.Default_Changed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
-        Me.Default_Changed.Visible = False
-        '
         'DataGridView3
         '
         Me.DataGridView3.AllowDrop = True
@@ -356,41 +336,6 @@ Partial Class Form1
         Me.DataGridView3.Name = "DataGridView3"
         Me.DataGridView3.Size = New System.Drawing.Size(772, 98)
         Me.DataGridView3.TabIndex = 30
-        '
-        'Column13
-        '
-        Me.Column13.HeaderText = "Subtitle Format"
-        Me.Column13.Name = "Column13"
-        '
-        'Column14
-        '
-        Me.Column14.HeaderText = "Language"
-        Me.Column14.Name = "Column14"
-        '
-        'Column15
-        '
-        Me.Column15.HeaderText = "# of Frames"
-        Me.Column15.Name = "Column15"
-        '
-        'Column16
-        '
-        Me.Column16.HeaderText = "Title"
-        Me.Column16.Name = "Column16"
-        '
-        'Column17
-        '
-        Me.Column17.HeaderText = "Default"
-        Me.Column17.Name = "Column17"
-        '
-        'Column18
-        '
-        Me.Column18.HeaderText = "Forced"
-        Me.Column18.Name = "Column18"
-        '
-        'Column19
-        '
-        Me.Column19.HeaderText = "Track ID"
-        Me.Column19.Name = "Column19"
         '
         'StatusStrip1
         '
@@ -533,7 +478,7 @@ Partial Class Form1
         Me.DataGridView6.AllowUserToResizeRows = False
         Me.DataGridView6.BackgroundColor = System.Drawing.SystemColors.Window
         Me.DataGridView6.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView6.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.DataGridViewTextBoxColumn9, Me.Column22})
+        Me.DataGridView6.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.DataGridViewTextBoxColumn9, Me.chkboxTranscodeDefault, Me.chkboxTranscodeForced, Me.Column22})
         Me.DataGridView6.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.DataGridView6.Location = New System.Drawing.Point(14, 414)
         Me.DataGridView6.Name = "DataGridView6"
@@ -548,11 +493,29 @@ Partial Class Form1
         Me.DataGridViewTextBoxColumn9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic
         Me.DataGridViewTextBoxColumn9.Width = 378
         '
+        'chkboxTranscodeDefault
+        '
+        Me.chkboxTranscodeDefault.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.chkboxTranscodeDefault.HeaderText = "Default"
+        Me.chkboxTranscodeDefault.Name = "chkboxTranscodeDefault"
+        Me.chkboxTranscodeDefault.ReadOnly = True
+        Me.chkboxTranscodeDefault.Width = 47
+        '
+        'chkboxTranscodeForced
+        '
+        Me.chkboxTranscodeForced.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.chkboxTranscodeForced.HeaderText = "Forced"
+        Me.chkboxTranscodeForced.Name = "chkboxTranscodeForced"
+        Me.chkboxTranscodeForced.ReadOnly = True
+        Me.chkboxTranscodeForced.Width = 46
+        '
         'Column22
         '
+        Me.Column22.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
         Me.Column22.FillWeight = 5.076141!
         Me.Column22.HeaderText = "Burn"
         Me.Column22.Name = "Column22"
+        Me.Column22.Width = 35
         '
         'btnTranscode
         '
@@ -563,6 +526,53 @@ Partial Class Form1
         Me.btnTranscode.Text = "Save Transcode Settings"
         Me.btnTranscode.UseVisualStyleBackColor = True
         '
+        'Column13
+        '
+        Me.Column13.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column13.HeaderText = "Subtitle Format"
+        Me.Column13.Name = "Column13"
+        Me.Column13.Width = 102
+        '
+        'Column14
+        '
+        Me.Column14.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column14.HeaderText = "Language"
+        Me.Column14.Name = "Column14"
+        Me.Column14.Width = 80
+        '
+        'Column15
+        '
+        Me.Column15.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column15.HeaderText = "# of Frames"
+        Me.Column15.Name = "Column15"
+        Me.Column15.Width = 88
+        '
+        'Column16
+        '
+        Me.Column16.HeaderText = "Title"
+        Me.Column16.Name = "Column16"
+        '
+        'Column17
+        '
+        Me.Column17.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column17.HeaderText = "Default"
+        Me.Column17.Name = "Column17"
+        Me.Column17.Width = 47
+        '
+        'Column18
+        '
+        Me.Column18.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column18.HeaderText = "Forced"
+        Me.Column18.Name = "Column18"
+        Me.Column18.Width = 46
+        '
+        'Column19
+        '
+        Me.Column19.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column19.HeaderText = "Track ID"
+        Me.Column19.Name = "Column19"
+        Me.Column19.Width = 74
+        '
         'ClassMyTreeView1
         '
         Me.ClassMyTreeView1.Location = New System.Drawing.Point(403, 88)
@@ -570,47 +580,102 @@ Partial Class Form1
         Me.ClassMyTreeView1.Size = New System.Drawing.Size(383, 147)
         Me.ClassMyTreeView1.TabIndex = 27
         '
-        'Column1
+        'Column6
         '
-        Me.Column1.HeaderText = "Video Format"
-        Me.Column1.Name = "Column1"
-        Me.Column1.ReadOnly = True
+        Me.Column6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
+        Me.Column6.FillWeight = 80.0!
+        Me.Column6.HeaderText = "Audio Format"
+        Me.Column6.Name = "Column6"
+        Me.Column6.ReadOnly = True
+        Me.Column6.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
         '
-        'Column2
+        'Column7
         '
-        Me.Column2.HeaderText = "Resolution"
-        Me.Column2.Name = "Column2"
-        Me.Column2.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        Me.Column7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
+        Me.Column7.FillWeight = 80.0!
+        Me.Column7.HeaderText = "Width"
+        Me.Column7.Name = "Column7"
+        Me.Column7.ReadOnly = True
+        Me.Column7.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        Me.Column7.Width = 65
         '
-        'Column3
+        'Column8
         '
-        Me.Column3.HeaderText = "fps"
-        Me.Column3.Name = "Column3"
+        Me.Column8.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
+        Me.Column8.FillWeight = 80.0!
+        Me.Column8.HeaderText = "Bit Rate (Kbps)"
+        Me.Column8.Name = "Column8"
+        Me.Column8.ReadOnly = True
+        Me.Column8.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        Me.Column8.Width = 85
         '
-        'Column4
+        'Column9
         '
-        Me.Column4.HeaderText = "Default"
-        Me.Column4.Name = "Column4"
+        Me.Column9.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column9.FillWeight = 80.0!
+        Me.Column9.HeaderText = "Language"
+        Me.Column9.Name = "Column9"
+        Me.Column9.ReadOnly = True
+        Me.Column9.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        Me.Column9.Width = 61
         '
-        'colVidTrack
+        'Column10
         '
-        Me.colVidTrack.HeaderText = "Track Id"
-        Me.colVidTrack.Name = "colVidTrack"
-        Me.colVidTrack.Visible = False
+        Me.Column10.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+        Me.Column10.FillWeight = 200.0!
+        Me.Column10.HeaderText = "Title"
+        Me.Column10.MaxInputLength = 30
+        Me.Column10.Name = "Column10"
+        Me.Column10.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        '
+        'Column11
+        '
+        Me.Column11.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+        Me.Column11.HeaderText = "Default"
+        Me.Column11.Name = "Column11"
+        Me.Column11.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column11.Width = 47
+        '
+        'Column12
+        '
+        Me.Column12.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None
+        Me.Column12.FillWeight = 80.0!
+        Me.Column12.HeaderText = "Track ID"
+        Me.Column12.Name = "Column12"
+        Me.Column12.ReadOnly = True
+        Me.Column12.Resizable = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.Column12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable
+        Me.Column12.Width = 80
+        '
+        'Title_Changed
+        '
+        Me.Title_Changed.HeaderText = "Title Changed"
+        Me.Title_Changed.Name = "Title_Changed"
+        Me.Title_Changed.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Title_Changed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.Title_Changed.Visible = False
+        '
+        'Default_Changed
+        '
+        Me.Default_Changed.HeaderText = "Default Changed"
+        Me.Default_Changed.Name = "Default_Changed"
+        Me.Default_Changed.Resizable = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.Default_Changed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic
+        Me.Default_Changed.Visible = False
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 566)
-        Me.Controls.Add(Me.btnTranscode)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.StatusStrip1)
-        Me.Controls.Add(Me.DataGridView3)
-        Me.Controls.Add(Me.DataGridView2)
-        Me.Controls.Add(Me.DataGridView1)
         Me.Controls.Add(Me.ClassMyTreeView1)
         Me.Controls.Add(Me.tbxOutputDirectory)
         Me.Controls.Add(Me.btnOutputDirectory)
@@ -624,9 +689,13 @@ Partial Class Form1
         Me.Controls.Add(Me.txtInputDirectory)
         Me.Controls.Add(Me.btnInputDirectory)
         Me.Controls.Add(Me.lblMode)
+        Me.Controls.Add(Me.DataGridView3)
+        Me.Controls.Add(Me.DataGridView1)
+        Me.Controls.Add(Me.DataGridView2)
+        Me.Controls.Add(Me.DataGridView6)
         Me.Controls.Add(Me.DataGridView4)
         Me.Controls.Add(Me.DataGridView5)
-        Me.Controls.Add(Me.DataGridView6)
+        Me.Controls.Add(Me.btnTranscode)
         Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.Name = "Form1"
@@ -672,13 +741,6 @@ Partial Class Form1
     Friend WithEvents DataGridView3 As DataGridView
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents ToolStripStatusLabel1 As ToolStripStatusLabel
-    Friend WithEvents Column13 As DataGridViewTextBoxColumn
-    Friend WithEvents Column14 As DataGridViewTextBoxColumn
-    Friend WithEvents Column15 As DataGridViewTextBoxColumn
-    Friend WithEvents Column16 As DataGridViewTextBoxColumn
-    Friend WithEvents Column17 As DataGridViewCheckBoxColumn
-    Friend WithEvents Column18 As DataGridViewCheckBoxColumn
-    Friend WithEvents Column19 As DataGridViewTextBoxColumn
     Friend WithEvents Button1 As Button
     Friend WithEvents RunRemuxToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Label1 As Label
@@ -690,13 +752,27 @@ Partial Class Form1
     Friend WithEvents Column20 As DataGridViewComboBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn5 As DataGridViewComboBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn6 As DataGridViewComboBoxColumn
-    Friend WithEvents DataGridViewTextBoxColumn9 As DataGridViewTextBoxColumn
-    Friend WithEvents Column22 As DataGridViewCheckBoxColumn
     Friend WithEvents PreferencesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents DataGridViewTextBoxColumn1 As DataGridViewTextBoxColumn
     Friend WithEvents DataGridViewTextBoxColumn2 As DataGridViewComboBoxColumn
     Friend WithEvents Column5 As DataGridViewComboBoxColumn
     Friend WithEvents Column21 As DataGridViewComboBoxColumn
+    Friend WithEvents Column1 As DataGridViewTextBoxColumn
+    Friend WithEvents Column2 As DataGridViewTextBoxColumn
+    Friend WithEvents Column3 As DataGridViewTextBoxColumn
+    Friend WithEvents Column4 As DataGridViewCheckBoxColumn
+    Friend WithEvents colVidTrack As DataGridViewTextBoxColumn
+    Friend WithEvents DataGridViewTextBoxColumn9 As DataGridViewTextBoxColumn
+    Friend WithEvents chkboxTranscodeDefault As DataGridViewCheckBoxColumn
+    Friend WithEvents chkboxTranscodeForced As DataGridViewCheckBoxColumn
+    Friend WithEvents Column22 As DataGridViewCheckBoxColumn
+    Friend WithEvents Column13 As DataGridViewTextBoxColumn
+    Friend WithEvents Column14 As DataGridViewTextBoxColumn
+    Friend WithEvents Column15 As DataGridViewTextBoxColumn
+    Friend WithEvents Column16 As DataGridViewTextBoxColumn
+    Friend WithEvents Column17 As DataGridViewCheckBoxColumn
+    Friend WithEvents Column18 As DataGridViewCheckBoxColumn
+    Friend WithEvents Column19 As DataGridViewTextBoxColumn
     Friend WithEvents Column6 As DataGridViewTextBoxColumn
     Friend WithEvents Column7 As DataGridViewTextBoxColumn
     Friend WithEvents Column8 As DataGridViewTextBoxColumn
@@ -706,9 +782,4 @@ Partial Class Form1
     Friend WithEvents Column12 As DataGridViewTextBoxColumn
     Friend WithEvents Title_Changed As DataGridViewCheckBoxColumn
     Friend WithEvents Default_Changed As DataGridViewCheckBoxColumn
-    Friend WithEvents Column1 As DataGridViewTextBoxColumn
-    Friend WithEvents Column2 As DataGridViewTextBoxColumn
-    Friend WithEvents Column3 As DataGridViewTextBoxColumn
-    Friend WithEvents Column4 As DataGridViewCheckBoxColumn
-    Friend WithEvents colVidTrack As DataGridViewTextBoxColumn
 End Class

@@ -263,6 +263,7 @@ Public Class Form1
         Dim arrSettings
         Dim arrTracks
         Dim arrDetails()
+        Dim numRows As Integer
 
         If rbRemux.Checked Then
             strPathMode = txtInputDirectory.Text & "\Remux"
@@ -310,11 +311,15 @@ Public Class Form1
                             info.Cells(3).Value = True
                         End If
                     Next
-                    For Each info As DataGridViewRow In DataGridView2.Rows
-                        If info.Cells(6).Value = arrTracks And info.Cells(5).Value = False Then
-                            info.Cells(5).Value = True
-                        End If
-                    Next
+                    If InStr(arrTracks, ":") <> 0 Then arrTracks = Strings.Left(arrTracks, 1)
+                    If arrTracks < DataGridView2.Rows.Count Then
+                        For Each info As DataGridViewRow In DataGridView2.Rows
+                            If info.Cells(6).Value <> arrTracks Then info.Cells(5).Value = False
+                            If info.Cells(6).Value = arrTracks Then
+                                info.Cells(5).Value = True
+                            End If
+                        Next
+                    End If
                     For Each info As DataGridViewRow In DataGridView3.Rows
                         If info.Cells(6).Value = arrTracks And info.Cells(4).Value = False Then
                             info.Cells(4).Value = True
@@ -323,37 +328,40 @@ Public Class Form1
                     'check if track order is different in the existing settings file and if
                     'it is then re-order the rows to reflect the change
                     ' **** I don't think this part works right now ****
+                    'right now we need to understand how to programatically change row order. I 
+                    'suspect that this may mean loding the rows into a temp array in the right
+                    'order clear the grid and write them back.
                 ElseIf Strings.Left(LCase(arrSetting), 11) = "track-order" Then
-                    arrTracks = Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", "")
-                    Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
-                    Dim i As Integer = 0
-                    For Each row As DataGridViewRow In DataGridView2.Rows
-                        Dim j As Integer = 0
-                        'For Each column In DataGridView2.Columns
-                        'If row.IsNewRow Then Continue For
-                        For Each cell As DataGridViewCell In row.Cells
-                            output(i, j) = cell.Value.ToString
-                            j += 1
-                        Next
-                        'Next
-                        i += 1
-                    Next
-
-                    DataGridView2.Rows.Clear()
-                    ReDim arrDetails(UBound(output, 2))
-                    For Each Track In arrTracks
-                        For i = 0 To UBound(output)
-                            If output(i, 6) = Track Then
-                                For j = 0 To UBound(output, 2)
-                                    arrDetails(j) = output(i, j).ToString
-                                Next
-                                RepopulateInfo(arrDetails, "Audio", output(i, 6))
-                            End If
-                        Next i
-                    Next
-                    For Each info As DataGridViewRow In DataGridView2.Rows
-                        info.Selected = True
-                    Next
+                        arrTracks = Split(Replace(Split(LCase(Trim(arrSetting)), " ")(1), "0:", ""), ",")
+                    'Dim output(DataGridView2.Rows.Count - 1, DataGridView2.Columns.Count - 1)
+                    'Dim i As Integer = 0
+                    'For Each row As DataGridViewRow In DataGridView2.Rows
+                    '    Dim j As Integer = 0
+                    '    'For Each column In DataGridView2.Columns
+                    '    'If row.IsNewRow Then Continue For
+                    '    For Each cell As DataGridViewCell In row.Cells
+                    '        output(i, j) = cell.Value.ToString
+                    '        j += 1
+                    '    Next
+                    '    'Next
+                    '    i += 1
+                    'Next
+                    numRows = DataGridView2.DisplayedRowCount(False)
+                    'DataGridView2.Rows.Clear()
+                    'ReDim arrDetails(UBound(output, 2))
+                    'For Each Track In arrTracks
+                    '    For i = 0 To UBound(output)
+                    '        If output(i, 6) = Track Then
+                    '            For j = 0 To UBound(output, 2)
+                    '                arrDetails(j) = output(i, j).ToString
+                    '            Next
+                    '            RepopulateInfo(arrDetails, "Audio", output(i, 6))
+                    '        End If
+                    '    Next i
+                    'Next
+                    'For Each info As DataGridViewRow In DataGridView2.Rows
+                    '    info.Selected = True
+                    'Next
                 End If
             Next
             'This section is for dealing with transcode settings
@@ -371,6 +379,12 @@ Public Class Form1
                         DataGridView5.Rows(0).Cells(2).Value = "Surround"
                     ElseIf Strings.Right(arrSetting, 7) = "stereo " Then
                         DataGridView5.Rows(0).Cells(2).Value = "Stereo"
+                    Else
+                        With DataGridView5.Rows(0)
+                            .Cells(1).Value = "Keep"
+                            .Cells(2).Value = "Keep"
+                            .Cells(3).Value = "Keep"
+                        End With
                     End If
                 ElseIf Strings.Left(arrSetting, 9) = "add-audio" Then
                     If Strings.Right(arrSetting, 9) = "original " Then
@@ -644,7 +658,7 @@ Public Class Form1
                     Select Case arrStream(i, 0)
                         Case "codec_name"
                             strName = arrStream(i, 1)
-                        Case "tag:NUMBER_OF_FRAMES-eng"
+                        Case "tag:NUMBER_OF_FRAMES"
                             strNumberOfFrames = arrStream(i, 1)
                         Case "tag:language"
                             strLanguage = arrStream(i, 1)
@@ -654,11 +668,11 @@ Public Class Form1
                             strTitle = arrStream(i, 1)
                         Case "disposition:default"
                             If arrStream(i, 1) = 1 Then
-                                strDefault = True
+                                blnDefault = True
                             End If
                         Case "disposition:forced"
                             If arrStream(i, 1) = 1 Then
-                                strForced = True
+                                blnForced = True
                             End If
                         Case "index"
                             strTrack = arrStream(i, 1)
@@ -678,7 +692,9 @@ Public Class Form1
                 ElseIf strMode = "Create" Then
                     Dim DGR As Integer = DataGridView6.Rows.Add
                     With DataGridView6
-                        .Rows(DGR).Cells(0).Value = strName & " / " & strNumberOfFrames & " / " & blnForced.ToString & " / " & If(strTitle = "", "-", strTitle)
+                        .Rows(DGR).Cells(0).Value = strName & " / " & strNumberOfFrames & " / " & If(strTitle = "", "-", strTitle)
+                        .Rows(DGR).Cells(1).Value = blnDefault
+                        .Rows(DGR).Cells(2).Value = blnForced
                     End With
                 End If
         End Select
@@ -824,7 +840,9 @@ Public Class Form1
     End Sub
 
     Private Sub RbRemux_CheckedChanged(sender As Object, e As EventArgs) Handles rbRemux.CheckedChanged
-        ValidateButtons(sender.text, sender.checked)
+        If sender.checked = "True" Then
+            ValidateButtons(sender.text, sender.checked)
+        End If
     End Sub
     Private Sub ValidateButtons(strSource As String, State As Boolean)
         'Takes input that can be Load, Remux, or Transcode then adjusts the form
@@ -834,120 +852,120 @@ Public Class Form1
         If strSource = "Load" Then
             blnRemux = rbRemux.Checked
             strSource = "Remux"
-
-            Select Case strSource
-                Case "Transcode"
-                    ClassMyTreeView1.Nodes.Clear()
-                    lbxDirectory.Items.Clear()
-                    tbxOutputDirectory.Clear()
-                    txtInputDirectory.Clear()
-                    RunRemuxToolStripMenuItem.Text = "Run Transcode"
-                    CleanUp()
-                    With btnMPV
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With btnSubtitleEdit
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With Button1
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With btnSaveRemux
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With btnTranscode
-                        .Enabled = True
-                        .Visible = True
-                    End With
-
-                    'Hide Remux grids
-                    With DataGridView1
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With DataGridView2
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With DataGridView3
-                        .Enabled = False
-                        .Visible = False
-                    End With
-
-                    'Show Transcode grids
-                    With DataGridView4
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With DataGridView5
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With DataGridView6
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                Case "Remux"
-                    ClassMyTreeView1.Nodes.Clear()
-                    lbxDirectory.Items.Clear()
-                    tbxOutputDirectory.Clear()
-                    txtInputDirectory.Clear()
-                    RunRemuxToolStripMenuItem.Text = "Run Remux"
-                    CleanUp()
-                    With btnMPV
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With btnSubtitleEdit
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With Button1
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With btnSaveRemux
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With btnTranscode
-                        .Enabled = False
-                        .Visible = False
-                    End With
-
-                    'Show Remux grids
-                    With DataGridView1
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With DataGridView2
-                        .Enabled = True
-                        .Visible = True
-                    End With
-                    With DataGridView3
-                        .Enabled = True
-                        .Visible = True
-                    End With
-
-                    'Hide Transcode grids
-                    With DataGridView4
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With DataGridView5
-                        .Enabled = False
-                        .Visible = False
-                    End With
-                    With DataGridView6
-                        .Enabled = False
-                        .Visible = False
-                    End With
-            End Select
         End If
+        Select Case strSource
+            Case "Transcode"
+                ClassMyTreeView1.Nodes.Clear()
+                lbxDirectory.Items.Clear()
+                tbxOutputDirectory.Clear()
+                txtInputDirectory.Clear()
+                RunRemuxToolStripMenuItem.Text = "Run Transcode"
+                CleanUp()
+                With btnMPV
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With btnSubtitleEdit
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With Button1
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With btnSaveRemux
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With btnTranscode
+                    .Enabled = True
+                    .Visible = True
+                End With
+
+                'Hide Remux grids
+                With DataGridView1
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView2
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView3
+                    .Enabled = False
+                    .Visible = False
+                End With
+
+                'Show Transcode grids
+                With DataGridView4
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView5
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView6
+                    .Enabled = True
+                    .Visible = True
+                End With
+            Case "Remux"
+                ClassMyTreeView1.Nodes.Clear()
+                lbxDirectory.Items.Clear()
+                tbxOutputDirectory.Clear()
+                txtInputDirectory.Clear()
+                RunRemuxToolStripMenuItem.Text = "Run Remux"
+                CleanUp()
+                With btnMPV
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With btnSubtitleEdit
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With Button1
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With btnSaveRemux
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With btnTranscode
+                    .Enabled = False
+                    .Visible = False
+                End With
+
+                'Show Remux grids
+                With DataGridView1
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView2
+                    .Enabled = True
+                    .Visible = True
+                End With
+                With DataGridView3
+                    .Enabled = True
+                    .Visible = True
+                End With
+
+                'Hide Transcode grids
+                With DataGridView4
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView5
+                    .Enabled = False
+                    .Visible = False
+                End With
+                With DataGridView6
+                    .Enabled = False
+                    .Visible = False
+                End With
+        End Select
+
     End Sub
 
     Private Sub BtnSaveRemux_Click(sender As Object, e As EventArgs) Handles btnSaveRemux.Click
@@ -983,7 +1001,8 @@ Public Class Form1
         Dim strFileName
         Dim strTrackOrder As String
         Dim arrTrackOrder
-        Dim strForcedTrack
+        Dim strForcedTrack = Nothing
+        Dim strNotDefaultAudio = Nothing
 
         'set paths
         If rbRemux.Checked Then
@@ -1016,6 +1035,9 @@ Public Class Form1
                 If objItem.Cells(5).Value = "True" Then
                     strDefaultAudio = "--default-track " & objItem.Cells(6).Value
                 End If
+                If objItem.Cells(7).Value = "True" Then
+                    strNotDefaultAudio = "--default-track " & objItem.Cells(6).Value & ":0"
+                End If
                 strAudio = AudioRemuxString(strAudio, objItem.Cells(6).Value)
             Next
 
@@ -1039,7 +1061,11 @@ Public Class Form1
                     strDefaultSubtitle = "--default-track " & objItem.Cells(6).Value
                 End If
                 If objItem.Cells(5).Value = True Then
-                    strForcedTrack = "--forced-track " & objItem.Cells(6).Value
+                    If strForcedTrack = "" Then
+                        strForcedTrack = "--forced-track " & objItem.Cells(6).Value
+                    Else
+                        strForcedTrack += " --forced-track " & objItem.Cells(6).Value
+                    End If
                 End If
                 strSubtitle = SubtitleRemuxString(strSubtitle, objItem.Cells(6).Value)
             Next
@@ -1053,100 +1079,126 @@ Public Class Form1
 
             'create the contents of the file
             ' **** there are issues here because some items may by blank and should not be added ****
-            If strTrackOrder <> "" Then
-                CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strForcedTrack & " " & My.Settings.MKVMerge_options & " " _
-                & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
-
-            Else
-                CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
-                & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strForcedTrack & " " & My.Settings.MKVMerge_options & " " _
-                & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
+            'base string first
+            CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34)
+            'add title
+            CreateCommandSettingsString += " --title " & Chr(34) & Split(strFileName, "-")(0) & Chr(34) & " "
+            'add default tracks
+            CreateCommandSettingsString += strDefaultVideo & " " & strDefaultAudio & " "
+            If strNotDefaultAudio <> "" Then
+                CreateCommandSettingsString += strNotDefaultAudio & " "
             End If
+            CreateCommandSettingsString += strDefaultSubtitle & " "
+            'add audio and subtitle tracks (by default all video tracks are copied)
+            CreateCommandSettingsString += strAudio & " " & strSubtitle & " "
+            'if audio/subtitle track order has been changed add it here
+            If strTrackOrder <> "" Then
+                CreateCommandSettingsString += strTrackOrder & " "
+            End If
+            'add any forced subtitle tracks
+            If strForcedTrack <> "" Then
+                CreateCommandSettingsString += strForcedTrack & " "
+            End If
+            'add default options set in preferences
+            If My.Settings.MKVMerge_options <> "" Then
+                CreateCommandSettingsString += My.Settings.MKVMerge_options & " "
+            End If
+            'finish with the output file name
+            CreateCommandSettingsString += Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
+            'If strTrackOrder <> "" Then
+            '    CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+            '    & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strTrackOrder & " " & strSubtitle & " " & strForcedTrack & " " & My.Settings.MKVMerge_options & " " _
+            '    & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
+
+            'Else
+            '    CreateCommandSettingsString = My.Settings.MKVMerge_Path & " --output " & Chr(34) & tbxOutputDirectory.Text & "\" & lbxDirectory.SelectedItem & "\" & strFileName & Chr(34) & " --title " & Chr(34) & Chr(34) & " " & strDefaultVideo & " " _
+            '    & strDefaultAudio & " " & strDefaultSubtitle & " " & strAudio & " " & strSubtitle & " " & strForcedTrack & " " & My.Settings.MKVMerge_options & " " _
+            '    & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
+            'End If
 
         ElseIf rbCreate.Checked Then
-            Dim arraylist As ArrayList = New ArrayList()
-            Dim strResolution As String
-            Dim strOutputFormat As String = ""
-            Dim strFrameRate As String
-            Dim strCodec As Object = ""
-            Dim strWidth As Object
-            Dim strBitRate As Object
-            Dim strDTS As Integer
-            Dim i
-            Dim strOptions As String = My.Settings.othertranscode_Options
+                Dim arraylist As ArrayList = New ArrayList()
+                Dim strResolution As String
+                Dim strOutputFormat As String = ""
+                Dim strFrameRate As String
+                Dim strCodec As Object = ""
+                Dim strWidth As Object
+                Dim strBitRate As Object
+                Dim strDTS As Integer
+                Dim i
+                Dim strOptions As String = My.Settings.othertranscode_Options
 
-            'Deal with video tracks
-            For i = 0 To DataGridView4.Rows.Count - 1
-                arraylist.Insert(0, DataGridView4.Rows(i))
-            Next
-            For Each objItem As DataGridViewRow In arraylist 'Video tracks
-                strResolution = objItem.Cells(1).Value
-                If objItem.Cells(2).Value = "hevc" Then strOutputFormat = "--hevc "
-                strFrameRate = objItem.Cells(3).Value
-            Next
+                'Deal with video tracks
+                For i = 0 To DataGridView4.Rows.Count - 1
+                    arraylist.Insert(0, DataGridView4.Rows(i))
+                Next
+                For Each objItem As DataGridViewRow In arraylist 'Video tracks
+                    strResolution = objItem.Cells(1).Value
+                    If objItem.Cells(2).Value = "hevc" Then strOutputFormat = "--hevc "
+                    strFrameRate = objItem.Cells(3).Value
+                Next
 
-            'Deal with Audio Tracks
-            arraylist = New ArrayList()
-            For i = DataGridView5.Rows.Count - 1 To 0 Step -1
-                arraylist.Insert(0, DataGridView5.Rows(i))
-            Next
-            i = 1
-            For Each objItem As DataGridViewRow In arraylist 'Audio tracks
-                strCodec = objItem.Cells(1).Value
-                strWidth = objItem.Cells(2).Value
-                strBitRate = objItem.Cells(3).Value
-                strDTS = InStr(objItem.Cells(0).Value, "dts (DTS")
+                'Deal with Audio Tracks
+                arraylist = New ArrayList()
+                For i = DataGridView5.Rows.Count - 1 To 0 Step -1
+                    arraylist.Insert(0, DataGridView5.Rows(i))
+                Next
+                i = 1
+                For Each objItem As DataGridViewRow In arraylist 'Audio tracks
+                    strCodec = objItem.Cells(1).Value
+                    strWidth = objItem.Cells(2).Value
+                    strBitRate = objItem.Cells(3).Value
+                    strDTS = InStr(objItem.Cells(0).Value, "dts (DTS")
 
-                If strCodec = "Keep" And strWidth = "Keep" And strBitRate = "Keep" Then strWidth = "original"
-                If i = 1 Then
-                    strAudio = "--main-audio 1=" & LCase(strWidth) & " "
-                Else
-                    strAudio = strAudio & "--add-audio " & i & "=" & LCase(strWidth) & " "
-                End If
-                If strCodec = "eac3" Then strOptions = My.Settings.othertranscode_Options & "--eac3 "
-                i += 1
-            Next
-
-            'Deal with Subtitle Tracks
-            i = 1
-            For Each objItem As DataGridViewRow In DataGridView6.Rows 'Subtitle tracks
-                If objItem.Cells(1).Value = True Then
-                    'burn subtitle
-                    If strSubtitle = "" Then
-                        strSubtitle = "--burn-subtitle " & i & " "
+                    If strCodec = "Keep" And strWidth = "Keep" And strBitRate = "Keep" Then strWidth = "original"
+                    If i = 1 Then
+                        strAudio = "--main-audio 1=" & LCase(strWidth) & " "
                     Else
-                        strSubtitle &= "--burn-subtitle " & i & " "
+                        strAudio = strAudio & "--add-audio " & i & "=" & LCase(strWidth) & " "
                     End If
-                Else
-                    'add subtitle
-                    If strSubtitle = "" Then
-                        strSubtitle = "--add-subtitle " & i & " "
+                    If strCodec = "eac3" Then strOptions = My.Settings.othertranscode_Options & "--eac3 "
+                    i += 1
+                Next
+
+                'Deal with Subtitle Tracks
+                i = 1
+                For Each objItem As DataGridViewRow In DataGridView6.Rows 'Subtitle tracks
+                    If objItem.Cells(1).Value = True Then
+                        'burn subtitle
+                        If strSubtitle = "" Then
+                            strSubtitle = "--burn-subtitle " & i & " "
+                        Else
+                            strSubtitle &= "--burn-subtitle " & i & " "
+                        End If
                     Else
-                        strSubtitle = strSubtitle & "--add-subtitle " & i & " "
+                        'add subtitle
+                        If strSubtitle = "" Then
+                            strSubtitle = "--add-subtitle " & i & " "
+                        Else
+                            strSubtitle = strSubtitle & "--add-subtitle " & i & " "
+                        End If
+                    End If
+                    i += 1
+                Next
+
+                'create the proper file name
+                If strDTS <> 0 And strCodec = "Keep" Then
+                    If strOptions = "" Then
+                        strOptions = My.Settings.othertranscode_Options
+                    Else
+                        strOptions &= "--pass-dts "
                     End If
                 End If
-                i += 1
-            Next
-
-            'create the proper file name
-            If strDTS <> 0 And strCodec = "Keep" Then
-                If strOptions = "" Then
-                    strOptions = My.Settings.othertranscode_Options
+                If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
+                    strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
                 Else
-                    strOptions &= "--pass-dts "
+                    strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
                 End If
-            End If
-            If ClassMyTreeView1.SelectedNode.Parent Is Nothing Then
-                strFileName = ClassMyTreeView1.SelectedNode.Text & ".mkv"
-            Else
-                strFileName = ClassMyTreeView1.SelectedNode.Text & "-" & LCase(ClassMyTreeView1.SelectedNode.Parent.Name) & ".mkv"
-            End If
 
-            CreateCommandSettingsString = My.Settings.othertranscode_Path & " " & strOptions & If(strOutputFormat, "") & strAudio & strSubtitle _
+                CreateCommandSettingsString = My.Settings.othertranscode_Path & " " & strOptions & If(strOutputFormat, "") & strAudio & strSubtitle _
                   & Chr(34) & strPathCommandMovie & "\" & strFileName & Chr(34)
-        Else
-            CreateCommandSettingsString = "Error"
+            Else
+                CreateCommandSettingsString = "Error"
         End If
     End Function
 
@@ -1402,7 +1454,9 @@ Public Class Form1
     End Function
 
     Private Sub RbCreate_CheckedChanged(sender As Object, e As EventArgs) Handles rbCreate.CheckedChanged
-        ValidateButtons(sender.text, sender.checked)
+        If sender.checked = "True" Then
+            ValidateButtons(sender.text, sender.checked)
+        End If
     End Sub
 
     Private Sub BtnTranscode_Click(sender As Object, e As EventArgs) Handles btnTranscode.Click
@@ -1449,4 +1503,14 @@ Public Class Form1
         box.ShowDialog()
     End Sub
 
+    Private Sub DataGridView2_CellValueChanged(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView2.CellValueChanged
+        Dim strCell
+        strCell = DataGridView2.CurrentCell
+        If strCell Is Nothing Then Exit Sub
+        If strCell.columnindex = "5" Then
+            If strCell.editedformattedvalue = False Then
+                DataGridView2.Rows(strCell.rowindex).Cells(7).Value = True
+            End If
+        End If
+    End Sub
 End Class
